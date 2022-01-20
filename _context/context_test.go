@@ -5,7 +5,5 @@ import (
 )
 
 func TestTimeoutDemo(t *testing.T) {
-	for i := 0; i < 100; i++ {
-		TimeoutDemo()
-	}
+	TimeoutDemo()
 }
