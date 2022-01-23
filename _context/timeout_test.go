@@ -4,10 +4,13 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"testing"
 	"time"
 )
 
 func TimeoutDemo() {
+	// context.Background() 本质是获取emptyCtx，即为空context
+	// 空context用于context根节点，本身不包含任何值，仅仅是其他context父节点
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancelFunc()
 	var wg sync.WaitGroup
@@ -36,4 +39,8 @@ Exit:
 func timeConsumingWork(c chan struct{}) {
 	time.Sleep(3 * time.Second)
 	c <- struct{}{}
+}
+
+func TestTimeoutDemo(t *testing.T) {
+	TimeoutDemo()
 }
