@@ -2,6 +2,7 @@ package _chan
 
 import (
 	"fmt"
+	"testing"
 	"time"
 )
 
@@ -29,4 +30,8 @@ func readChan(c <-chan int) {
 // wirthChan 只写管道
 func wirthChan(c chan<- int) {
 	c <- 1
+}
+
+func TestOneWayChanDemo(t *testing.T) {
+	OneWayChanDemo()
 }
