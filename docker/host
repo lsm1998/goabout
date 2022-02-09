@@ -1,0 +1,11 @@
+119.91.113.111 master 主节点	Docker Kubeadm kubelet kubectl flannel
+119.91.192.70 node1 从节点1	Docker Kubeadm kubelet kubectl flannel
+119.91.153.177 node2 从节点2	Docker Kubeadm kubelet kubectl flannel
+
+
+vi /etc/hosts
+192.168.0.3 master
+192.168.0.7 node1
+192.168.0.9 node2
+
+

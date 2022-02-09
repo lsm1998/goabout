@@ -1,0 +1,100 @@
+通用：
+yum update
+
+curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+
+yum install -y yum-utils device-mapper-persistent-data lvm2 wget
+
+yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+
+yum install docker-ce-19.03.11 -y
+
+systemctl start docker
+systemctl enable docker
+
+yum install wget net-tools ntp git ‐y
+
+ntpdate 0.asia.pool.ntp.org
+
+
+cat >>/etc/yum.repos.d/kubernetes.repo <<EOF
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+EOF
+
+
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+br_netfilter
+EOF
+
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+
+
+sudo sysctl --system
+
+
+systemctl stop firewalld
+systemctl disable firewalld
+
+swapoff -a
+yes | cp /etc/fstab /etc/fstab_bak
+
+
+mkdir /etc/docker
+
+
+cat > /etc/docker/daemon.json <<EOF
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "registry-mirrors": ["https://registry.cn-hangzhou.aliyuncs.com"]
+}
+EOF
+
+
+systemctl daemon-reload
+systemctl restart docker
+systemctl enable docker
+
+yum install -y kubelet-1.19.3 kubeadm-1.19.3 kubectl-1.19.3
+
+systemctl enable kubelet
+
+
+master节点：
+hostnamectl set-hostname master
+
+mkdir -p $HOME/.kube
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+chown $(id -u):$(id -g) $HOME/.kube/config
+
+echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> ~/.bash_profile
+
+kubeadm init --kubernetes-version=1.19.2 \
+--apiserver-advertise-address=192.168.0.3 \
+--image-repository registry.aliyuncs.com/google_containers \
+--service-cidr=10.1.0.0/16 \
+--pod-network-cidr=10.244.0.0/16
+
+kubectl apply -f flannel.yaml
+
+kubectl get node （查看node信息）
+kubectl get pod -n kube-system （查看pod信息）
+kubeadm token create --print-join-command （重新生成join密钥）
+
+node1节点：
+hostnamectl set-hostname node1
+
+kubeadm join 192.168.0.3:6443 --token htswp3.fc5eub30gt2b6wtw     --discovery-token-ca-cert-hash sha256:72c7f451eeec5a453a63366e4ad5fd13b3c961fef323a6ff5c92163be55541e3
+
+node2节点：
+hostnamectl set-hostname node2
+
+kubeadm join 192.168.0.3:6443 --token htswp3.fc5eub30gt2b6wtw     --discovery-token-ca-cert-hash sha256:72c7f451eeec5a453a63366e4ad5fd13b3c961fef323a6ff5c92163be55541e3
