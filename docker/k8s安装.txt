@@ -44,6 +44,7 @@ sudo sysctl --system
 systemctl stop firewalld
 systemctl disable firewalld
 
+关闭swap分区
 swapoff -a
 yes | cp /etc/fstab /etc/fstab_bak
 
@@ -71,17 +72,17 @@ systemctl enable kubelet
 master节点：
 hostnamectl set-hostname master
 
+kubeadm init --kubernetes-version=1.19.2 \
+--apiserver-advertise-address=192.168.74.132 \
+--image-repository registry.aliyuncs.com/google_containers \
+--service-cidr=10.1.0.0/16 \
+--pod-network-cidr=10.244.0.0/16
+
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
 
 echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> ~/.bash_profile
-
-kubeadm init --kubernetes-version=1.19.2 \
---apiserver-advertise-address=192.168.0.3 \
---image-repository registry.aliyuncs.com/google_containers \
---service-cidr=10.1.0.0/16 \
---pod-network-cidr=10.244.0.0/16
 
 kubectl apply -f flannel.yaml
 
@@ -94,6 +95,7 @@ kubectl apply -f kubernetes-dashboard.yaml
 
 kubectl get pod,svc -n kubernetes-dashboard
 
+生成访问密钥
 kubectl -n kube-system describe $(kubectl -n kube-system get secret -n kube-system -o name | grep namespace) | grep token
 
 
@@ -106,3 +108,15 @@ node2节点：
 hostnamectl set-hostname node2
 
 kubeadm join 192.168.0.3:6443 --token htswp3.fc5eub30gt2b6wtw     --discovery-token-ca-cert-hash sha256:72c7f451eeec5a453a63366e4ad5fd13b3c961fef323a6ff5c92163be55541e3
+
+一键重来
+kubeadm reset
+ifconfig cni0 down
+ip link delete cni0
+
+
+查看日志
+kubectl logs kube-flannel-ds-tbwkx -n kube-system
+
+k8s重启不用init
+https://www.cnblogs.com/CoderLinkf/p/12410749.html

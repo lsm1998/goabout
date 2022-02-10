@@ -1,0 +1,10 @@
+配置static网络后出现主机不可达
+
+网关ip=192.168.74.2
+子关ip=192.168.74.0
+子网掩码=255.255.255.0
+
+GATEWAY=192.168.74.2
+DNS=8.8.8.8
+
+https://blog.csdn.net/gaokcl/article/details/82834925
