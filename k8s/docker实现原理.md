@@ -25,3 +25,9 @@ ps aux
 cgroups(Control Groups) 是 linux 内核提供的一种机制，这种机制可以根据需求把一系列系统任务及其子任务整合(或分隔)到按资源划分等级
 的不同组内，从而为系统资源管理提供一个统一的框架。简单说，cgroups 可以限制、记录任务组所使用的物理资源。本质上来说，cgroups 是内核
 附加在程序上的一系列钩子(hook)，通过程序运行时对资源的调度触发相应的钩子以达到资源追踪和限制的目的。
+
+
+## 3.windows和mac os docker运行原理
+
+1.windows通过Hyper-v创建一个虚拟的linux系统；
+2.windows和mac os都通过Boot2Docker，是一个专为Docker而设计的轻量级Linux发型包，Boot2Docker完全运行于内存中，24M大小，启动仅5-6秒；
