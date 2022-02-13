@@ -1,11 +1,10 @@
-package main
+package source
 
 import "fmt"
 
-// 1.set GOSSAFUNC=main
-// 2.go build -gcflags -S main.go
+// sudo GOSSAFUNC=main go build main.go
 
-// GOSSAFUNC=main go build main.go
+// main
 func main() {
 	a := TestFunc(3)
 	fmt.Println(a)
