@@ -7,4 +7,9 @@
 GATEWAY=192.168.74.2
 DNS=8.8.8.8
 
+
+vi /etc/resolv.conf
+
+nameserver 8.8.8.8
+
 https://blog.csdn.net/gaokcl/article/details/82834925
