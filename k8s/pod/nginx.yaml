@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: c
+  name: my-nginx
   labels:
     name: my-nginx
 spec:

@@ -1,3 +1,0 @@
-1.kubectl run --image=nginx:alpine nginx-app --port=80
-
-2.kubectl apply -f nginx.yaml
