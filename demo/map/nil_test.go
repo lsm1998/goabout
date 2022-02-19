@@ -8,7 +8,7 @@ import (
 func MapNilDemo() {
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Println(err)
+			fmt.Println("panic!", err)
 		}
 	}()
 	var m map[string]int
