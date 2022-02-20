@@ -1,5 +1,8 @@
 启动pod
+1.通过json或者yaml文件
 kubectl apply -f my-nginx.yaml
+2.通过kubectl run命令
+kubectl run my-nginx --image=nginx --port=80 --generator=run/v1 replicationcontroller "my-nginx" created
 
 查看pod描述信息
 kubectl describe pod my-nginx
