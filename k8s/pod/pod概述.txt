@@ -4,15 +4,6 @@ kubectl apply -f my-nginx.yaml
 2.通过kubectl run命令
 kubectl run my-nginx --image=nginx --port=80 --generator=run/v1 replicationcontroller "my-nginx" created
 
-查看pod描述信息
-kubectl describe pod my-nginx
-
-进入pod
-kubectl exec -it lifecycle-demo sh
-
-查看日志
-kubectl logs my-nginx
-
 Pod 网络
 每个 Pod 都在每个地址族中获得一个唯一的 IP 地址。
 Pod 中的每个容器共享网络名字空间，包括 IP 地址和网络端口。

@@ -95,9 +95,6 @@ kubectl apply -f kubernetes-dashboard.yaml
 
 kubectl get pod,svc -n kubernetes-dashboard
 
-生成访问密钥
-kubectl -n kube-system describe $(kubectl -n kube-system get secret -n kube-system -o name | grep namespace) | grep token
-
 
 node1节点：
 hostnamectl set-hostname node1

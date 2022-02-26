@@ -1,0 +1,21 @@
+kubectl create 和 kubectl apply
+    创建deployment、pod、service等资源对象
+    区别：
+    1.create先删除资源，再创建，而apply不会删除，只会升级；
+    2.执行create需要yaml文件必须是完整的配置字段内容，而apply只需要部分；
+    3.如果没有任何改动，create会执行失败；
+
+kubectl delete -f ${filename}
+    根据配置文件删除资源对象
+
+kubectl exec -it ${id} sh
+    类似于docker exec -it ${id} sh，进入容器终端
+
+kubectl -n kube-system describe $(kubectl -n kube-system get secret -n kube-system -o name | grep namespace) | grep token
+    生成访问密钥
+
+kubectl describe pod ${name}
+    查看pod描述信息
+
+kubectl logs ${name}
+    查看日志
