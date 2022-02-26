@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: log-config
+  namespace: default
+data:
+  LOG_LEVEL: error
+  LOG_DIR: /data/app/log
