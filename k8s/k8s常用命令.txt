@@ -19,3 +19,6 @@ kubectl describe pod ${name}
 
 kubectl logs ${name}
     查看日志
+
+kubectl expose deployment web --type=NodePort --port=8080
+    创建一个NodePort类型的service，并暴露80端口

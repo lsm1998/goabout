@@ -1,0 +1,5 @@
+Deployments
+一个 Deployment 控制器为 Pods 和 ReplicaSets 提供声明式的更新能力。
+
+你负责描述 Deployment 中的 目标状态，而 Deployment 控制器可以更改实际状态，
+使其变为期望状态。你可以定义 Deployment 以创建新的 ReplicaSet，或删除现有 Deployment， 并通过新的 Deployment 适配其资源。
