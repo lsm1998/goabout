@@ -18,6 +18,7 @@ func MapNilDemo() {
 
 	fmt.Println(m["1"])
 
+	// nil map不允许新增
 	m["1"] = 1
 }
 
