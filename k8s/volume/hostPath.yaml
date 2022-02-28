@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+  labels:
+    name: myapp
+spec:
+  containers:
+  - name: myapp
+    image: nginx
+    volumeMounts:
+      - mountPath: /test-nginx
+        name: host-path
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 80
+  volumes:
+    - name: host-path
+      hostPath:
+          path: /tmp/nginx
+          # DirectoryOrCreate 目录不存在则创建
+          type: DirectoryOrCreate
+
