@@ -1,0 +1,26 @@
+1.创建JCR目录（master节点）
+    export JFROG_HOME=/etc & source ~/.bash_profile
+    mkdir -p $JFROG_HOME/artifactory/var/etc/
+    cd $JFROG_HOME/artifactory/var/etc/
+    touch ./system.yaml
+    chown -R 1030:1030 $JFROG_HOME/artifactory/var
+    chmod -R 777 $JFROG_HOME/artifactory/var
+
+2.启动 JCR（master节点）
+    docker run --name artifactory-jcr -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory -d -p 8081:8081 -p 8082:8082 registry.cn-beijing.aliyuncs.com/qingfeng666/artifactory-jcr:7.4.3
+    默认账户 admin/password
+
+3.配置 JCR 的本地域名解析，增加art.local指向（各个节点都要）
+    vi /etc/hosts
+    192.168.99.101 master art.local
+    192.168.99.102 node1
+    192.168.99.103 node2
+
+4.配置Docker insecure registry（各个节点都要）
+    vi /etc/docker/daemon.json 加入配置
+
+    "insecure-registries": ["art.local:8081"]
+
+    systemctl restart docker 重启docker
+
+5.执行docker login art.local:8081
