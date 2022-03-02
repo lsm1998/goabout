@@ -1,5 +1,6 @@
 1.创建JCR目录（master节点）
-    export JFROG_HOME=/etc & source ~/.bash_profile
+    export JFROG_HOME=/etc
+    source ~/.bash_profile
     mkdir -p $JFROG_HOME/artifactory/var/etc/
     cd $JFROG_HOME/artifactory/var/etc/
     touch ./system.yaml

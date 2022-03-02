@@ -1,3 +1,6 @@
+K8S 命令表
+http://docs.kubernetes.org.cn/683.html
+
 kubectl create 和 kubectl apply
     创建deployment、pod、service等资源对象
     区别：
@@ -22,3 +25,8 @@ kubectl logs ${name}
 
 kubectl expose deployment web --type=NodePort --port=8080
     创建一个NodePort类型的service，并暴露80端口
+
+kubectl get ${CMD}
+    po pods 获取pod
+    svc service 获取service
+    node nodes 获取节点信息
