@@ -66,41 +66,36 @@
 <body>
 <div id="allmap"></div>
 <script src="mymap.js"></script>
+<script src="js/axios.min.js"></script>
 <script type="text/javascript">
-    /*实例名称只能取mymap -_-*/
-    let mymap = new myMap([])
+    let mymap = new myMap(22.581754,114.055235)
     mymap.init()
+    axios.get('https://api.boss-dev.strongberry.cn/c4/cstore/city/tomap?city=深圳市')
+        .then(function (response) {
+            let res = response.data
+            let districts_stores = res.data.districts_stores
+            let addrList = []
 
-    let testaddr2 = [
-        {
-            "id": 16,
-            "lat": "37.973327",
-            "lng": "112.48844",
-            "mapCity": "太原市",
-            "mapDistrict": "尖草坪区",
-            "mapProvince": "山西省",
-            "userName": "测试一"
-        },
-        {
-            "id": 429,
-            "lat": "33.748757",
-            "lng": "113.295614",
-            "mapCity": "平顶山市",
-            "mapDistrict": "新华区",
-            "mapProvince": "河南省",
-            "userName": "测试二"
-        },
-        {
-            "id": 430,
-            "lat": "33.748757",
-            "lng": "113.295624",
-            "mapCity": "札幌市",
-            "mapDistrict": "新华区",
-            "mapProvince": "河南省",
-            "userName": "测试三"
-        }
-    ]
-    mymap.rerender(testaddr2)
+            let keys = Object.keys(districts_stores);
+            for (let i = 0; i < keys.length; i++) {
+                for (let j = 0; j < districts_stores[keys[i]].length; j++) {
+                    const temp = districts_stores[keys[i]][j]
+                    addrList.push({
+                        "id": temp.ID,
+                        "lat": temp.latitude,
+                        "lng": temp.longitude,
+                        "mapProvince": temp.district,
+                        "mapCity": temp.show_name,
+                        "mapDistrict": temp.district,
+                        "userName": temp.show_name,
+                    })
+                }
+            }
+            mymap.rerender(addrList)
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 </script>
 </body>
 </html>

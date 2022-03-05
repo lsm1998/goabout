@@ -1,8 +1,8 @@
-let myMap = function (addrlist) {
+let myMap = function (latitude,longitude) {
     this.map = new BMap.Map("allmap");
     this.markerClusterer = {}
-    /*设置默认显示河南9级*/
-    this.map.centerAndZoom(new BMap.Point(113.670847, 34.78713), 7);
+
+    this.map.centerAndZoom(new BMap.Point(longitude, latitude), 13);
     this.map.enableScrollWheelZoom();
 
     this.map.setMinZoom(6)
@@ -16,7 +16,7 @@ let myMap = function (addrlist) {
 
     /*工具栏全局变量*/
     this.pt = null
-    this.addrs = addrlist
+    this.addrs = []
     this.load = document.querySelector("#mapLoading")
 }
 
@@ -28,7 +28,7 @@ myMap.prototype.init = function () {
         markers: that.markers, maxZoom: 13, girdSize: 200,
         styles: [{
             size: new BMap.Size(92, 92),
-            backgroundColor: '#2d89f0',
+            backgroundColor: '#F02D44FF',
             textColor: '#FFFFFF'
         }]
     }, that);
@@ -43,7 +43,6 @@ myMap.prototype.makeMaker = function () {
     for (let i=0; i < that.addrs.length; i++) {
         pt = new BMap.Point(that.addrs[i].lng, that.addrs[i].lat);
         let marker = new BMap.Marker(pt)
-        marker.province = that.addrs[i].mapProvince
         marker.city = that.addrs[i].mapCity
         marker.area = that.addrs[i].mapDistrict
         marker.id = that.addrs[i].id
@@ -84,9 +83,7 @@ myMap.prototype.getBoundary = function (e) {
     if (e.type == "onclick") {
         mymap.map.clearOverlays();
         var zoom = mymap.map.getZoom()
-        if (zoom < 9) {
-            mymap.map.setZoom(9)
-        } else if (zoom >= 9 && zoom < 13) {
+        if (zoom < 13) {
             mymap.map.setZoom(13)
         } else if (zoom >= 13 && zoom < 14) {
             mymap.map.setZoom(15)
@@ -102,7 +99,7 @@ myMap.prototype.getBoundary = function (e) {
             text = e.target.children[0].innerText;
         } else {
             text = e.target.innerText;
-            if (/人才/g.test(text)) {
+            if (/门店/g.test(text)) {
                 return
             }
         }
@@ -126,7 +123,7 @@ myMap.prototype.renderBoundary = function (bdary, boundaryText) {
         for (var i = 0; i < count; i++) {
             var ply = new BMap.Polygon(rs.boundaries[i], {
                 strokeWeight: 2,
-                fillColor: "#2d89f0",
+                fillColor: "#f04a2d",
                 strokeColor: "#4783E7",
                 fillOpacity: 0.2
             }); //建立多边形覆盖物
@@ -173,7 +170,7 @@ myMap.prototype.setAreaZoom = function (area, level, pt) {
             } else {
                 console.log("您选择地址没有解析到结果!");
             }
-        }, "河南省");
+        }, "");
     }
 }
 
@@ -195,7 +192,6 @@ myMap.prototype.inMaps = function () {
     }
     /*抛出当前地图显示id*/
     console.log(inmaps)
-
 }
 
 
