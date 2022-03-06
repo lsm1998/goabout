@@ -1,10 +1,12 @@
 let myMap = function (latitude, longitude) {
-    this.map = new BMap.Map("allmap");
+    this.map = new BMap.Map("allmap", {minZoom: 11, maxZoom: 16});
     this.markerClusterer = {}
     this.map.centerAndZoom(new BMap.Point(longitude, latitude), 13);
     this.map.enableScrollWheelZoom();
     this.map.enableKeyboard();
-    this.map.setMinZoom(6)
+    // this.map.setMinZoom(6)
+    // this.map.setMaxZoom(16)
+    this.map.enableScrollWheelZoom(true)
     /*地址解析*/
     this.myGeo = new BMap.Geocoder();
     this.currentType = "KJRC"
@@ -21,9 +23,11 @@ myMap.prototype.init = function () {
     that.makeMaker()
     //最简单的用法，生成一个marker数组，然后调用markerClusterer类即可。
     that.markerClusterer = new BMapLib.MarkerClusterer(that.map, {
-        markers: that.markers, maxZoom: 13, girdSize: 200,
+        markers: that.markers,
+        maxZoom: 13,
+        girdSize: 200,
         styles: [{
-            size: new BMap.Size(92, 92),
+            size: new BMap.Size(100, 100),
             backgroundColor: '#F02D44FF',
             textColor: '#FFFFFF'
         }]
