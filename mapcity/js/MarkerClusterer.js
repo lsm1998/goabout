@@ -207,7 +207,7 @@ var BMapLib = window.BMapLib = BMapLib || {};
         var mapBounds = this._map.getBounds();
         var extendedBounds = getExtendedBounds(this._map, mapBounds, this._gridSize);
 
-        if (this._mymap.statistics.length > 0 && this._map.getZoom() <= 13) {
+        if (this._mymap.statistics.length > 0 && this._map.getZoom() <= 14) {
             this._addStatisticsCluster(this._mymap.statistics);
             return;
         }
@@ -269,7 +269,7 @@ var BMapLib = window.BMapLib = BMapLib || {};
 
                 }
 
-            } else if (_zoom > 10 && _zoom <= 13) {
+            } else if (_zoom > 10 && _zoom <= 14) {
                 for (var j = 0; j < statis[i].cityList.length; j++) {
 
                     for (var k = 0; k < statis[i].cityList[j].countyList.length; k++) {
@@ -308,7 +308,7 @@ var BMapLib = window.BMapLib = BMapLib || {};
         var clusterToAddTo = null;
         var position = marker.getPosition();
         var _zoom = this._map.getZoom();
-        if (_zoom <= 13) {
+        if (_zoom <= 14) {
             for (var i = 0, cluster; cluster = this._clusters[i]; i++) {
                 var center = cluster.getCenter();
                 if (center) {
@@ -317,7 +317,7 @@ var BMapLib = window.BMapLib = BMapLib || {};
                         if (d > 500000) {
                             continue
                         }
-                    } else if (_zoom > 10 && _zoom <= 13) {
+                    } else if (_zoom > 10 && _zoom <= 14) {
                         if (d > 30000) {
                             continue
                         }
@@ -330,7 +330,7 @@ var BMapLib = window.BMapLib = BMapLib || {};
                     var clusterType = marker.province;
                     if (_zoom > 7 && _zoom <= 10) {
                         clusterType = marker.city;
-                    } else if (_zoom > 10 && _zoom <= 13) {
+                    } else if (_zoom > 10 && _zoom <= 14) {
                         if (!marker.area) {
                             marker.area = marker.city
                         }
@@ -776,7 +776,7 @@ var BMapLib = window.BMapLib = BMapLib || {};
             _belongText = this._markers[0].province
         } else if (zoom > 7 && zoom <= 10) {
             _belongText = this._markers[0].city
-        } else if (zoom > 10 && zoom <= 13) {
+        } else if (zoom > 10 && zoom <= 14) {
             for (var i = 0; i < this._markers.length; i++) {
                 if (this._markers[i].area) {
                     _belongText = this._markers[i].area

@@ -1,5 +1,5 @@
 let myMap = function (latitude, longitude) {
-    this.map = new BMap.Map("allmap", {minZoom: 11, maxZoom: 16});
+    this.map = new BMap.Map("allmap", {minZoom: 11, maxZoom: 18});
     this.markerClusterer = {}
     this.map.centerAndZoom(new BMap.Point(longitude, latitude), 13);
     this.map.enableScrollWheelZoom();
@@ -24,7 +24,7 @@ myMap.prototype.init = function () {
     //最简单的用法，生成一个marker数组，然后调用markerClusterer类即可。
     that.markerClusterer = new BMapLib.MarkerClusterer(that.map, {
         markers: that.markers,
-        maxZoom: 13,
+        maxZoom: 14,
         girdSize: 200,
         styles: [{
             size: new BMap.Size(100, 100),
@@ -85,7 +85,9 @@ myMap.prototype.getBoundary = function (e) {
         var zoom = mymap.map.getZoom()
         if (zoom < 13) {
             mymap.map.setZoom(13)
-        } else if (zoom >= 13 && zoom < 14) {
+        } else if (zoom >= 13 && zoom <= 14) {
+            mymap.map.setZoom(14)
+        } else {
             mymap.map.setZoom(15)
         }
         //e.point.lat = e.point.lat-0.05
@@ -111,8 +113,8 @@ myMap.prototype.getBoundary = function (e) {
 myMap.prototype.renderBoundary = function (bdary, boundaryText) {
     var that = this;
     bdary.get(boundaryText, function (rs) {       //获取行政区域
-                                                  // 清除边界
-                                                  //that.map.clearOverlays();
+        // 清除边界
+        //that.map.clearOverlays();
         that.clearBoundary()
         var count = rs.boundaries.length; //行政区域的点有多少个
         if (count === 0) {
