@@ -1,19 +1,15 @@
-let myMap = function (latitude,longitude) {
+let myMap = function (latitude, longitude) {
     this.map = new BMap.Map("allmap");
     this.markerClusterer = {}
-
     this.map.centerAndZoom(new BMap.Point(longitude, latitude), 13);
     this.map.enableScrollWheelZoom();
-
+    this.map.enableKeyboard();
     this.map.setMinZoom(6)
     /*地址解析*/
     this.myGeo = new BMap.Geocoder();
-
     this.currentType = "KJRC"
-
     this.markers = []  // 地图标
     this.statistics = [] // 2.0版 数据返回包含统计
-
     /*工具栏全局变量*/
     this.pt = null
     this.addrs = []
@@ -40,7 +36,7 @@ myMap.prototype.makeMaker = function () {
     if (that.addrs.length === 0) {
         return;
     }
-    for (let i=0; i < that.addrs.length; i++) {
+    for (let i = 0; i < that.addrs.length; i++) {
         pt = new BMap.Point(that.addrs[i].lng, that.addrs[i].lat);
         let marker = new BMap.Marker(pt)
         marker.city = that.addrs[i].mapCity
@@ -91,27 +87,28 @@ myMap.prototype.getBoundary = function (e) {
         //e.point.lat = e.point.lat-0.05
         mymap.map.setCenter(e.currentTarget._position);
         /*展示搜索框*/
-        //mymap.isloading()
+        mymap.map.isloading()
     } else {
-        var bdary = new BMap.Boundary();
-        var text;
-        if (e.target.children.length > 0) {
-            text = e.target.children[0].innerText;
-        } else {
-            text = e.target.innerText;
-            if (/门店/g.test(text)) {
-                return
-            }
-        }
-        mymap.renderBoundary(bdary, text)
+        // 绘制边界
+        // var bdary = new BMap.Boundary();
+        // var text;
+        // if (e.target.children.length > 0) {
+        //     text = e.target.children[0].innerText;
+        // } else {
+        //     text = e.target.innerText;
+        //     if (/门店/g.test(text)) {
+        //         return
+        //     }
+        // }
+        // mymap.renderBoundary(bdary, text)
     }
 }
 
 myMap.prototype.renderBoundary = function (bdary, boundaryText) {
     var that = this;
     bdary.get(boundaryText, function (rs) {       //获取行政区域
-        // 清除边界
-        //that.map.clearOverlays();
+                                                  // 清除边界
+                                                  //that.map.clearOverlays();
         that.clearBoundary()
         var count = rs.boundaries.length; //行政区域的点有多少个
         if (count === 0) {
@@ -144,35 +141,35 @@ myMap.prototype.clearBoundary = function () {
     //this.markerClusterer._redraw()
 }
 
-myMap.prototype.setAreaZoom = function (area, level, pt) {
-    var that = this
-    var _zoom = 8
-    if (level == 1) {
-        _zoom = 10
-    } else if (level == 2) {
-        _zoom = 13
-    } else if (level == 0) {
-        _zoom = 9
-    } else if (level == 3) {
-        _zoom = 14
-    }
-    if (pt) {
-        //that.map.setMinZoom(_zoom-2);
-        that.map.setZoom(_zoom);
-        that.map.setCenter(pt);
-        return;
-    } else {
-        that.myGeo.getPoint(area, function (point) {
-            that.map.setMinZoom(_zoom - 2)
-            that.map.setZoom(_zoom)
-            if (point) {
-                that.map.setCenter(point)
-            } else {
-                console.log("您选择地址没有解析到结果!");
-            }
-        }, "");
-    }
-}
+// myMap.prototype.setAreaZoom = function (area, level, pt) {
+//     var that = this
+//     var _zoom = 8
+//     if (level == 1) {
+//         _zoom = 10
+//     } else if (level == 2) {
+//         _zoom = 13
+//     } else if (level == 0) {
+//         _zoom = 9
+//     } else if (level == 3) {
+//         _zoom = 14
+//     }
+//     if (pt) {
+//         //that.map.setMinZoom(_zoom-2);
+//         that.map.setZoom(_zoom);
+//         that.map.setCenter(pt);
+//         return;
+//     } else {
+//         that.myGeo.getPoint(area, function (point) {
+//             that.map.setMinZoom(_zoom - 2)
+//             that.map.setZoom(_zoom)
+//             if (point) {
+//                 that.map.setCenter(point)
+//             } else {
+//                 console.log("您选择地址没有解析到结果!");
+//             }
+//         }, "");
+//     }
+// }
 
 myMap.prototype.inMaps = function () {
     var _overlays = this.map.getOverlays();

@@ -59,16 +59,18 @@
         }
     </style>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=67jMQ5DmYTe1TLMBKFUTcZAR"></script>
-    <script type="text/javascript" src="TextIconOverlay.js"></script>
-    <script type="text/javascript" src="MarkerClusterer.js"></script>
+    <script type="text/javascript" src="js/TextIconOverlay.js"></script>
+    <script type="text/javascript" src="js/MarkerClusterer.js"></script>
     <title>地图找房</title>
 </head>
 <body>
-<div id="allmap"></div>
-<script src="mymap.js"></script>
+<div id="allmap" style="width: 100%;height: 100%">
+</div>
+<script src="js/mymap.js"></script>
+<script src="js/vue@2.js"></script>
 <script src="js/axios.min.js"></script>
 <script type="text/javascript">
-    let mymap = new myMap(22.581754,114.055235)
+    let mymap = new myMap(22.581754, 114.055235);
     mymap.init()
     axios.get('https://api.boss-dev.strongberry.cn/c4/cstore/city/tomap?city=深圳市')
         .then(function (response) {

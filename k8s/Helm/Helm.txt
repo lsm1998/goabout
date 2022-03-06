@@ -1,0 +1,24 @@
+Helm
+    Kubernetes 中的包管理工具
+    用 Yaml 管理多个应用同时部署
+    实现了部署的版本管理
+    应用和配置分离
+
+安装
+    1.下载
+    wget https://get.helm.sh/helm-v3.4.1-linux-amd64.tar.gz -O helm-v3.4.1-linux-amd64.tar.gz
+    2.解压
+    tar -zxvf  helm-v3.4.1-linux-amd64.tar.gz
+    3.移动到/usr/local/bin
+    mv linux-amd64/helm /usr/local/bin/helm
+
+部署一个 Helm Chart
+    1.创建一个nginx Helm目录
+    helm create nginx
+    2.在 nginx 文件同级目录打包
+    helm package nginx
+    3.部署
+    helm install nginx nginx-0.1.0.tgz
+    4.删除部署
+    helm delete nginx
+
