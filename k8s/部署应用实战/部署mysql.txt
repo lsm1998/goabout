@@ -1,0 +1,8 @@
+1.worker node上安装 mysql（便于使用mysql客户端而已）
+    yum install mysql -y
+
+2.部署mysql，kubectl create -f mysql.yaml
+
+3.连接mysql，mysql -uroot -h node1 -P 30306 -ppassword
+
+4.SQL初始化操作。。。
