@@ -7,7 +7,13 @@
     chmod -R 777 $JFROG_HOME/artifactory/var
 
 2.启动 JCR（master节点）
-    docker run --name artifactory-jcr -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory -d -p 8081:8081 -p 8082:8082 registry.cn-beijing.aliyuncs.com/qingfeng666/artifactory-jcr:7.4.3
+    docker run --name artifactory-jcr \
+    -d \
+    -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory \
+    -p 8081:8081 -p 8082:8082 \
+    --privileged=true \
+    docker.bintray.io/jfrog/artifactory-jcr:latest
+
     默认账户 admin/password
 
 3.配置 JCR 的本地域名解析，增加art.local指向（各个节点都要）
