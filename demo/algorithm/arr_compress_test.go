@@ -11,6 +11,10 @@ import (
 */
 func TestArrCompress(t *testing.T) {
 	fmt.Println(ArrCompress([]int{1, 2, 4, 5, 8, 10}))
+	fmt.Println(ArrCompress([]int{10}))
+	fmt.Println(ArrCompress([]int{1, 5}))
+	fmt.Println(ArrCompress([]int{1, 2}))
+	fmt.Println(ArrCompress([]int{1, 1}))
 }
 
 func ArrCompress(arr []int) string {
