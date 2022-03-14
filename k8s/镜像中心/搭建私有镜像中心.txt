@@ -31,3 +31,6 @@
     systemctl restart docker 重启docker
 
 5.执行docker login art.local:8081
+
+
+119.91.113.111 art.local

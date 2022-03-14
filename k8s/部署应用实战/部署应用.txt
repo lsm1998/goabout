@@ -2,10 +2,10 @@
     参考 配置与使用JCR仓库.txt
 
 2.vi /etc/docker/daemon.json
-    配置 "insecure-registries": ["art.local:8081","192.168.0.128:8081"]
+    配置 "insecure-registries": ["art.local:8081","119.91.113.111:8081"]
 
 2.创建密钥
-    kubectl create secret docker-registry regcred-local --docker-server=192.168.0.128:8081 --docker-username=admin --docker-password=sky97482489 --docker-email=487005831@qq.com
+    kubectl create secret docker-registry regcred-local --docker-server=119.91.113.111:8081 --docker-username=admin --docker-password=LSMsky1998 --docker-email=487005831@qq.com
 
 3.查看密钥
     kubectl describe secret regcred-local
