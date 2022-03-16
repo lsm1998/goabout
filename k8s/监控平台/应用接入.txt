@@ -1,0 +1,40 @@
+1.编译镜像
+docker build -t 119.91.113.111:8081/docker-local/kubeblog:1.3 .
+
+2.设置latest标签
+docker tag 119.91.113.111:8081/docker-local/kubeblog:latest 119.91.113.111:8081/docker-local/kubeblog:latest
+
+3.推送到JCR仓库
+docker push 119.91.113.111:8081/docker-local/kubeblog:latest
+
+4.部署应用
+使用 /Helm/kubeblog 目录
+
+helm package kubeblog
+
+helm install kubeblog kubeblog-0.1.2.tgz
+
+查看应用的metrics 监控数据接口
+http://192.168.0.128:30002/actuator/prometheus
+
+
+错误描述：
+docker push 119.91.113.111:8081/docker-local/kubeblog:latest
+The push refers to repository [119.91.113.111:8081/docker-local/kubeblog]
+28b58102b94e: Retrying in 1 second
+138726990cf7: Retrying in 1 second
+5b40c5fb5220: Retrying in 1 second
+717b092b8c86: Retrying in 1 second
+unknown: Authentication is required
+
+错误解决：
+docker login 119.91.113.111:8081（而不是docker login art.local:8081）
+
+
+错误描述：
+Normal   Scheduled  62s                default-scheduler  Successfully assigned default/kubeblog-846ccc85c9-gfgwp to node1
+  Normal   Pulling    24s (x3 over 62s)  kubelet            Pulling image "119.91.113.111:8081/docker/kubeblog:latest"
+  Warning  Failed     23s (x3 over 62s)  kubelet            Failed to pull image "119.91.113.111:8081/docker/kubeblog:latest": rpc error: code = Unknown desc = Error response from daemon: Get http://119.91.113.111:8081/v2/docker/kubeblog/manifests/latest: unknown: Authentication is required
+  Warning  Failed     23s (x3 over 62s)  kubelet            Error: ErrImagePull
+  Normal   BackOff    9s (x4 over 61s)   kubelet            Back-off pulling image "119.91.113.111:8081/docker/kubeblog:latest"
+  Warning  Failed     9s (x4 over 61s)   kubelet            Error: ImagePullBackOff
