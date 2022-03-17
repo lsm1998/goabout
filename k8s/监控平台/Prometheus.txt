@@ -1,0 +1,65 @@
+Prometheus 相比于其他传统监控工具主要有以下几个特点：
+    具有由 metric 名称和键/值对标识的时间序列数据的多维数据模型
+    有一个灵活的查询语言
+    不依赖分布式存储，只和本地磁盘有关
+    通过 HTTP 的服务拉取时间序列数据
+    也支持推送的方式来添加时间序列数据
+    还支持通过服务发现或静态配置发现目标
+    多种图形和仪表板支持
+
+1.安装Node Exporter（master、node都需要）
+yum -y install ntp
+systemctl enable ntpd
+ntpdate time1.aliyun.com
+
+2.创建NameSpace：“monitoring”
+kubectl apply -f monitoring-ns.yml
+
+3.部署node-exporter daemonset
+kubectl apply -f node-exporter-daemonset.yml
+
+4.部署node-exporter service
+kubectl apply -f node-exporter-service.yml
+
+5.创建对应的ServiceAccount
+kubectl apply -f kube-state-metrics-ServiceAccount.yml
+
+6.部署kube-state-metrics deployment
+kubectl apply -f kube-state-metrics-deploy.yml
+
+7.部署kube-state-metrics service
+kubectl apply -f kube-state-metrics-service.yml
+
+8.部署node disk monitor
+kubectl apply -f monitor-node-disk-daemonset.yml
+
+-----------prometheus--------------
+
+9.部署prometheus ServiceAccount
+kubectl apply -f prometheus-k8s-ServiceAccount.yml
+
+10.创建配置相关的configmap
+kubectl apply -f prometheus-config-configmap.yml
+
+11.创建警告规则相关的configmap
+kubectl apply -f prometheus-rules-configmap.yml
+
+12.创建Prometheus的缺省用户及密码
+kubectl apply -f prometheus-secret.yml
+
+13.部署Prometheus Server的Deployment
+kubectl apply -f prometheus-deploy.yml
+
+14.部署Prometheus Server的Service
+kubectl apply -f prometheus-service.yml
+
+-----------Grafana--------------
+
+15.创建Grafana Dashboard模版相关的configmap
+kubectl apply -f grafana-net-2-dashboard-configmap.yml
+
+16.部署Grafana Server的 Deployment
+kubectl apply -f grafana-deploy.yml
+
+17.部署Grafana Server的 Service
+kubectl apply -f grafana-service.yml

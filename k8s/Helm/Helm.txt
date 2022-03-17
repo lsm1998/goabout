@@ -22,3 +22,12 @@ Helm
     4.删除部署
     helm delete nginx
 
+配置helm仓库
+    helm repo add helm http://jcr.lsm1998.com:8081/artifactory/api/helm/helm --username admin --password xxx
+
+
+部署kubeblog
+    helm package kubeblog kubeblog
+    helm install kubeblog kubeblog-0.1.0.tgz
+
+curl -uadmin:APx4JZnUuvK7A9zbeBomF9Q98A -T kubeblog-0.1.2.tgz  "http://jcr.lsm1998.com:8082/artifactory/helm/kubeblog-0.1.2.tgz"
