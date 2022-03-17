@@ -27,9 +27,6 @@ spec:
           - name: MYSQL_USER_TEST
             value: "root"
           - name: MYSQL_PASSWORD_TEST
-            valueFrom:
-                secretKeyRef:
-                  name: mysql-password-test
-                  key: MYSQL_PASSWORD_TEST
+            value: "password"
       imagePullSecrets:
       - name: regcred-local

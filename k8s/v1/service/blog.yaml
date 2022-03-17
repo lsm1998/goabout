@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-blog
+spec:
+  selector:
+    matchLabels:
+      run: my-blog
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: my-blog
+    spec:
+      containers:
+        - name: my-blog
+          image: 119.91.153.177:8081/docker-local/kubeblog:latest
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 80

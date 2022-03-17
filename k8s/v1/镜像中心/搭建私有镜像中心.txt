@@ -1,16 +1,14 @@
 1.创建JCR目录（master节点）
-    export JFROG_HOME=/etc
-    source ~/.bash_profile
-    mkdir -p $JFROG_HOME/artifactory/var/etc/
-    cd $JFROG_HOME/artifactory/var/etc/
+    mkdir -p /etc/artifactory/var/etc/
+    cd /etc/artifactory/var/etc/
     touch ./system.yaml
-    chown -R 1030:1030 $JFROG_HOME/artifactory/var
-    chmod -R 777 $JFROG_HOME/artifactory/var
+    chown -R 1030:1030 /etc/artifactory/var
+    chmod -R 777 /etc/artifactory/var
 
 2.启动 JCR（master节点）
     docker run --name artifactory-jcr \
     -d \
-    -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory \
+    -v /etc/artifactory/var/:/var/opt/jfrog/artifactory \
     -p 8081:8081 -p 8082:8082 \
     --privileged=true \
     docker.bintray.io/jfrog/artifactory-jcr:latest
@@ -34,4 +32,4 @@
 
 
 改装版（releases-docker.jfrog.io）：
-docker run --name artifactory-jcr -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory -d -p 8081:8081 -p 8082:8082 releases-docker.jfrog.io/jfrog/artifactory-jcr:7.33.9
+docker run --name artifactory-jcr -v /etc/artifactory/var/:/var/opt/jfrog/artifactory -d -p 8081:8081 -p 8082:8082 releases-docker.jfrog.io/jfrog/artifactory-jcr:7.33.9
