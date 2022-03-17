@@ -14,6 +14,11 @@ func TestOrderPrint(t *testing.T) {
 	OrderPrintWithCond()
 }
 
+// TestOrderPrintWithChan 多协程按顺序打印（使用CSP）
+func TestOrderPrintWithChan(t *testing.T) {
+	OrderPrintWithChan()
+}
+
 func OrderPrintWithCond() {
 	mutex := sync.Mutex{}
 	cond := sync.NewCond(&mutex)

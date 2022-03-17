@@ -1,0 +1,15 @@
+119.91.153.177:8081
+
+vi /etc/docker/daemon.json
+"insecure-registries": ["119.91.153.177:8081"]
+
+systemctl restart docker
+
+docker login 119.91.153.177:8081
+
+
+docker pull registry.cn-beijing.aliyuncs.com/qingfeng666/kubeblog:1.0
+
+docker tag registry.cn-beijing.aliyuncs.com/qingfeng666/kubeblog:1.0 119.91.153.177:8081/docker-local/kubeblog:1.0
+
+docker push 119.91.153.177:8081/docker-local/kubeblog:1.0
