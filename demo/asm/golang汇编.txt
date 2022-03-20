@@ -1,0 +1,38 @@
+golang汇编使用plan9汇编
+
+x86汇编
+    https://zhuanlan.zhihu.com/p/53394807
+
+四个预定义的符号作为伪寄存器
+    FP: 帧指针 –参数和局部变量–
+    PC: 程序计数器 –跳转和分支–
+    SB: 静态基址指针 –全局符号–
+    SP: 栈指针 –栈的顶端–.
+
+// 编译
+go build -gcflags="-S"
+go tool compile -S main.go
+go tool compile -N -S main.go // 禁止优化
+// 反编译
+go tool objdump <binary>
+
+MOVUPS
+    对128位（16字节）做移动处理
+
+MOVUPS
+    对128位（16字节）做移动处理，必须128位对齐
+
+FUNCDATA
+    FUNCDATA以及PCDATA指令包含有被gc回收所使用的信息，由编译器自动加入
+
+nosplit
+    向编译器表明不应该插入 stack-split 的用来检查栈需要扩张的前导指令
+
+TEXT
+    TEXT ${args} 代表args会放在内存的.text段中
+
+runtime.convT32 runtime.convT64
+    将一个无符号32位 64位整数转成一个unsafe.Pointer
+
+runtime.convT2E
+    类型转为空接口（即为any）

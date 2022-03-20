@@ -1,11 +1,14 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // GOOS=linux GOARCH=386 go tool compile -N -S main.go >> main.S
 func main() {
 	muteType := MuteType{}
-	fmt.Println(muteType, SetMuteType(&muteType))
+	_ = SetMuteType(&muteType)
+	fmt.Println(muteType)
 }
 
 type (
