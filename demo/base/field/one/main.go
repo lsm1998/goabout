@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-// GOOS=linux GOARCH=386 go tool compile -N -S main.go >> main.S
+// GOOS=linux GOARCH=386 go tool compile -S main.go >> main.S
 func main() {
 	oneType := OneType{}
 	fmt.Println(oneType, SetOneType(&oneType))
@@ -14,6 +14,7 @@ type (
 	}
 )
 
+//go:noinline
 func SetOneType(oneType *OneType) error {
 	oneType.Name = "hello"
 	return nil
