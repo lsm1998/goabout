@@ -6,8 +6,8 @@ import (
 
 // GOOS=linux GOARCH=386 go tool compile -N -S main.go >> main.S
 func main() {
-	muteType := MuteType{}
-	outMuch(muteType, SetMuteType(&muteType))
+	muteType := &MuteType{}
+	outMuch(muteType, SetMuteType(muteType))
 }
 
 type (

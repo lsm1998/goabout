@@ -6,7 +6,6 @@ import "fmt"
 // go build -gcflags="-m" main.go
 func main() {
 	muteType := MuteType{}
-	// fmt.Println(muteType, SetMuteType(&muteType))
 	outMuch(muteType, SetMuteType(&muteType))
 }
 
