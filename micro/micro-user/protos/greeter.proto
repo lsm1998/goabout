@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+// package micro.micro_user.greeter;
+option go_package = "./;protos";
+
+// protoc --proto_path=. --micro_out=. --go_out=. greeter.proto
+service Greeter {
+  rpc Hello(HelloRequest) returns (HelloResponse) {}
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloResponse {
+  string greeting = 2;
+}

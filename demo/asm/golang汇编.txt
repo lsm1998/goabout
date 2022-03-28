@@ -3,6 +3,9 @@ golang汇编使用plan9汇编
 x86汇编
     https://zhuanlan.zhihu.com/p/53394807
 
+汇编指令
+    https://www.bookstack.cn/read/advanced-go-programming-book/ch3-asm-ch3-02-arch.md
+
 四个预定义的符号作为伪寄存器
     FP: 帧指针 –参数和局部变量–
     PC: 程序计数器 –跳转和分支–
@@ -15,6 +18,9 @@ go tool compile -S main.go
 go tool compile -N -S main.go // 禁止优化
 // 反编译
 go tool objdump <binary>
+
+LEAQ
+    是MOVQ的变形，从内存加载数据到寄存器
 
 MOVUPS
     对128位（16字节）做移动处理
