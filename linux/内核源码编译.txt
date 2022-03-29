@@ -1,0 +1,15 @@
+基于centos7
+
+yum install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison
+
+yum install ncurses-devel
+
+tar xvf linux-5.17.1.tar.xz
+
+cd linux-5.17.1
+
+cp -v /boot/config-$(uname -r) .config
+
+make menuconfig
+
+make
