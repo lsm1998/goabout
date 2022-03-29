@@ -1,7 +1,7 @@
 网络配置
 
 1.选择NAT网络
-2.编辑/etc/
+2.编辑/etc/sysconfig/network-scripts/ifcfg-ens33
 ONBOOT=yes
 
 配置static网络后出现主机不可达
