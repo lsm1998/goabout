@@ -1,0 +1,4 @@
+1.提示 没有规则可以创建“/opt/hello/hello.o”需要的目标“tools/objtool/objtool”。
+
+原因是objtool缺失导致，加入编译参数
+make CONFIG_STACK_VALIDATION=

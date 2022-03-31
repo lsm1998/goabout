@@ -4,12 +4,23 @@ yum install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex
 
 yum install ncurses-devel
 
-tar xvf linux-5.17.1.tar.xz
+yum install openssl-devel
 
-cd linux-5.17.1
+tar xvf linux-4.9.309.tar.xz
+
+cd linux-4.9.309
 
 cp -v /boot/config-$(uname -r) .config
 
 make menuconfig
 
 make
+
+// 安装驱动模块
+make modules_install
+
+// 安装内核
+make install
+
+// 重启 选择编译后的内核启动
+reboot
