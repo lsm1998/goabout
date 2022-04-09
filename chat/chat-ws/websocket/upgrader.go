@@ -12,12 +12,9 @@ import (
 
 //协议升级, conn处理 业务层conn
 type GnetUpgraderConn struct {
-	GnetConn gnet.Conn
-
-	UniqId string //连接的全局唯一id ?
-
-	LastActiveTs int64 //上次活跃的时间 unix 时间戳
-
+	GnetConn          gnet.Conn
+	UniqId            string //连接的全局唯一id
+	LastActiveTs      int64  //上次活跃的时间 unix 时间戳
 	IsSuccessUpgraded bool
 	Upgrader          ws.Upgrader
 }
@@ -38,59 +35,46 @@ func timeWheelJob(param *jobParam) {
 
 	} else {
 		//进入新的时间循环
-		param.server.connTimeWheel.AddTimer(time.Second*time.Duration((ConnMaxIdleSeconds-diffNow)), nil, param)
+		param.server.connTimeWheel.AddTimer(time.Second*time.Duration(ConnMaxIdleSeconds-diffNow), nil, param)
 	}
 
 }
 
 // 读数据 这里为什么没用 *GnetUpgraderConn ?
 func (u GnetUpgraderConn) Read(b []byte) (n int, err error) {
-
 	targetLength := len(b)
 	if targetLength < 1 {
 		return 0, nil
 	}
-
 	if u.GnetConn.BufferLength() >= targetLength {
 		//buffer中数据够
 		curNum, realData := u.GnetConn.ReadN(targetLength)
-
 		n = curNum
-
 		copy(b, realData) //数据拷贝
-
 	} else {
 		//buffer 中数据不够
 		allData := u.GnetConn.Read()
 		u.GnetConn.ResetBuffer() //数据已全部读出来
-
-		copy(b, allData) //数据拷贝
-
+		copy(b, allData)         //数据拷贝
 		n = len(allData)
 	}
-
 	return n, nil
 }
 
-//写数据 这里为什么没用 *GnetUpgraderConn ?
 func (u GnetUpgraderConn) Write(b []byte) (n int, err error) {
-
-	u.GnetConn.AsyncWrite(b)
-
-	return len(b), nil
+	return len(b), u.GnetConn.AsyncWrite(b)
 }
 
-//更新连接活跃时间到当前时间
+// UpdateActiveTsToNow 更新连接活跃时间到当前时间
 func (u *GnetUpgraderConn) UpdateActiveTsToNow() {
 	u.LastActiveTs = time.Now().Unix()
 
 }
 
-//默认的协议升级类
+// NewDefaultUpgrader 默认的协议升级类
 func NewDefaultUpgrader(conn gnet.Conn) *GnetUpgraderConn {
 	return &GnetUpgraderConn{
-		GnetConn: conn,
-
+		GnetConn:          conn,
 		Upgrader:          defaultUpgrader,
 		IsSuccessUpgraded: false,
 	}

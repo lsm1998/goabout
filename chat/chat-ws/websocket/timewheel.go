@@ -56,9 +56,7 @@ func newTimeWheel(interval time.Duration, slotNum int, job Job) *TimeWheel {
 		removeTaskChannel: make(chan interface{}),
 		stopChannel:       make(chan bool),
 	}
-
 	tw.initSlots()
-
 	return tw
 }
 
@@ -146,9 +144,7 @@ func (tw *TimeWheel) scanAndRunTask(l *list.List) {
 func (tw *TimeWheel) addTask(task *Task) {
 	pos, circle := tw.getPositionAndCircle(task.delay)
 	task.circle = circle
-
 	tw.slots[pos].PushBack(task)
-
 	if task.key != nil {
 		tw.timer[task.key] = pos
 	}
@@ -158,9 +154,8 @@ func (tw *TimeWheel) addTask(task *Task) {
 func (tw *TimeWheel) getPositionAndCircle(d time.Duration) (pos int, circle int) {
 	delaySeconds := int(d.Seconds())
 	intervalSeconds := int(tw.interval.Seconds())
-	circle = int(delaySeconds / intervalSeconds / tw.slotNum)
-	pos = int(tw.currentPos+delaySeconds/intervalSeconds) % tw.slotNum
-
+	circle = delaySeconds / intervalSeconds / tw.slotNum
+	pos = (tw.currentPos + delaySeconds/intervalSeconds) % tw.slotNum
 	return
 }
 
@@ -179,7 +174,6 @@ func (tw *TimeWheel) removeTask(key interface{}) {
 			delete(tw.timer, task.key)
 			l.Remove(e)
 		}
-
 		e = e.Next()
 	}
 }

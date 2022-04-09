@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-	echoServer := websocket.NewEchoServer(":8080")
-
+	echoServer := websocket.NewEchoServer()
 	log.Fatal(gnet.Serve(echoServer, fmt.Sprintf("tcp://:%d", 8080), gnet.WithMulticore(true)))
 }
