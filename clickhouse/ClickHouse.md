@@ -1,10 +1,13 @@
 ### docker安装clickhouse
 
+mkdir -p /opt/clickhouse/log
+mkdir -p /opt/clickhouse/data
+
 docker run -d --name my_clickhouse --ulimit nofile=262144:262144 \
--p 8123:8123 -p 9000:9000 -p 9009:9009 --privileged =true \
+-p 8123:8123 -p 9000:9000 -p 9009:9009 --privileged=true \
 -v /opt/clickhouse/log:/var/log/clickhouse-server \
 -v /opt/clickhouse/data:/var/lib/clickhouse \
-clickhouse/clickhouse-server
+clickhouse/clickhouse-server:22.2.3.5
 
 ### OLTP和OLAP
 
