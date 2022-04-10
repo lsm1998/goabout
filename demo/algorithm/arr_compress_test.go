@@ -10,7 +10,7 @@ import (
 数组压缩
 */
 func TestArrCompress(t *testing.T) {
-	fmt.Println(ArrCompress([]int{1, 2, 4, 5, 8, 10}))
+	fmt.Println(ArrCompress([]int{1, 2, 4, 5, 8, 10, 11, 12, 13}))
 	fmt.Println(ArrCompress([]int{10}))
 	fmt.Println(ArrCompress([]int{1, 5}))
 	fmt.Println(ArrCompress([]int{1, 2}))
