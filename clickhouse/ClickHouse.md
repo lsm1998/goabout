@@ -1,6 +1,10 @@
 ### docker安装clickhouse
 
-https://blog.csdn.net/jianzhang11/article/details/105445855
+docker run -d --name my_clickhouse --ulimit nofile=262144:262144 \
+-p 8123:8123 -p 9000:9000 -p 9009:9009 --privileged =true \
+-v /opt/clickhouse/log:/var/log/clickhouse-server \
+-v /opt/clickhouse/data:/var/lib/clickhouse \
+clickhouse/clickhouse-server
 
 ### OLTP和OLAP
 
