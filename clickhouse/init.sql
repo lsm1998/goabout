@@ -13,3 +13,16 @@ CREATE TABLE yidu.clickStream
     source_id        UInt64
 ) ENGINE=MergeTree()
 ORDER BY (time_stamp)
+
+-- 创建分区数据表
+CREATE TABLE yidu.order_merge_tree
+(
+    id           UInt64,
+    sku_id       String,
+    out_trade_no String,
+    total_amount DECIMAL(16, 2),
+    create_time  Datetime
+) ENGINE=MergeTree()
+partition by toYYYYMMDD(create_time)
+ORDER BY (id,sku_id)
+primary key (id);
