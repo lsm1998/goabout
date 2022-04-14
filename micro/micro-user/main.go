@@ -18,7 +18,7 @@ func main() {
 		micro.Name("micro.micro-user.greeter"),
 		micro.Version("v1"),
 		micro.Registry(etcd.NewRegistry(func(options *registry.Options) {
-			options.Addrs = []string{"119.91.113.111:2379"}
+			options.Addrs = []string{"119.91.192.70:2379"}
 		})),
 	)
 
