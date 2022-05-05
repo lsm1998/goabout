@@ -38,7 +38,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 
 func main() {
 	ebiten.SetWindowSize(666, 940)
-	ebiten.SetWindowTitle("Geometry Matrix")
+	ebiten.SetWindowTitle("渲染图片")
 	if err := ebiten.RunGame(&Game{}); err != nil {
 		log.Fatal(err)
 	}
