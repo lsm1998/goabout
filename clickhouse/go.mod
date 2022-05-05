@@ -14,6 +14,4 @@ require (
 	github.com/hashicorp/go-version v1.4.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
-	github.com/kr/pretty v0.3.0 // indirect
-	github.com/satori/go.uuid v1.2.0 // indirect
 )
