@@ -1,0 +1,4 @@
+1.执行特定平台的rt0文件；
+2.runtime·rt0_go函数；
+3.proc.go文件的main函数；
+4.调用用户main_main函数；
