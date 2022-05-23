@@ -6,7 +6,7 @@ import (
 	"unsafe"
 )
 
-type Map struct {
+type MyMap struct {
 	mu sync.Mutex
 
 	// 存储一个readOnly类型的值
@@ -35,7 +35,7 @@ type readOnly struct {
 }
 
 // Store 设置键值对
-func (m *Map) Store(key, value interface{}) {
+func (m *MyMap) Store(key, value interface{}) {
 	read, _ := m.read.Load().(readOnly)
 	// 1.先判断key是否在read中存在，如果存在则直接尝试store
 	if e, ok := read.m[key]; ok && e.tryStore(&value) {
@@ -97,7 +97,7 @@ func (e *entry) tryStore(i *interface{}) bool {
 }
 
 // dirtyLocked
-func (m *Map) dirtyLocked() {
+func (m *MyMap) dirtyLocked() {
 	if m.dirty != nil {
 		return
 	}
@@ -128,7 +128,7 @@ func newEntry(i interface{}) *entry {
 }
 
 // Load 根据key获取一个value
-func (m *Map) Load(key interface{}) (value interface{}, ok bool) {
+func (m *MyMap) Load(key interface{}) (value interface{}, ok bool) {
 	read, _ := m.read.Load().(readOnly)
 	e, ok := read.m[key]
 	// 1.先判断key是否在read中不存在 && 已经追加
@@ -162,7 +162,7 @@ func (e *entry) load() (value interface{}, ok bool) {
 	return *(*interface{})(p), true
 }
 
-func (m *Map) missLocked() {
+func (m *MyMap) missLocked() {
 	m.misses++
 	if m.misses < len(m.dirty) {
 		return
