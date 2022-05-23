@@ -86,8 +86,8 @@ func main() {
 		}
 	}
 
-	//add ratelimit,refill every second,set capacity 3
-	ratebucket := rate.NewLimiter(rate.Every(time.Second*1), 100)
+	//add rateLimit,refill every second,set capacity 3
+	rateBucket := rate.NewLimiter(rate.Every(time.Second*1), 100)
 
 	var svc service.Service
 	svc = service.ArithmeticService{}
@@ -97,18 +97,18 @@ func main() {
 	svc = service.Metrics(requestCount, requestLatency)(svc)
 
 	calEndpoint := service.MakeArithmeticEndpoint(svc)
-	calEndpoint = service.NewTokenBucketLimitterWithBuildIn(ratebucket)(calEndpoint)
+	calEndpoint = service.NewTokenBucketLimitterWithBuildIn(rateBucket)(calEndpoint)
 	calEndpoint = kitzipkin.TraceEndpoint(zipkinTracer, "calculate-endpoint")(calEndpoint)
 	//calEndpoint = kitjwt.NewParser(service.JwtKeyFunc, jwt.SigningMethodHS256, kitjwt.StandardClaimsFactory)(calEndpoint)
 
 	//创建健康检查的Endpoint
 	healthEndpoint := service.MakeHealthCheckEndpoint(svc)
-	healthEndpoint = service.NewTokenBucketLimitterWithBuildIn(ratebucket)(healthEndpoint)
+	healthEndpoint = service.NewTokenBucketLimitterWithBuildIn(rateBucket)(healthEndpoint)
 	healthEndpoint = kitzipkin.TraceEndpoint(zipkinTracer, "health-endpoint")(healthEndpoint)
 
 	//身份认证Endpoint
 	authEndpoint := service.MakeAuthEndpoint(svc)
-	authEndpoint = service.NewTokenBucketLimitterWithBuildIn(ratebucket)(authEndpoint)
+	authEndpoint = service.NewTokenBucketLimitterWithBuildIn(rateBucket)(authEndpoint)
 	authEndpoint = kitzipkin.TraceEndpoint(zipkinTracer, "login-endpoint")(authEndpoint)
 
 	//把算术运算Endpoint\健康检查、登录Endpoint封装至ArithmeticEndpoints
@@ -119,7 +119,7 @@ func main() {
 	}
 
 	//创建注册对象
-	registar := service.Register(*consulHost, *consulPort, *serviceHost, *servicePort, logger)
+	registry := service.Register(*consulHost, *consulPort, *serviceHost, *servicePort, logger)
 
 	// http server
 	go func() {
@@ -127,7 +127,7 @@ func main() {
 		//创建http.Handler
 		handler := transport.MakeHttpHandler(ctx, endpts, zipkinTracer, logger)
 		//启动前执行注册
-		registar.Register()
+		registry.Register()
 		errChan <- http.ListenAndServe(":"+*servicePort, handler)
 	}()
 
@@ -151,8 +151,8 @@ func main() {
 		errChan <- fmt.Errorf("%s", <-c)
 	}()
 
-	error := <-errChan
+	err := <-errChan
 	//服务退出取消注册
-	registar.Deregister()
-	fmt.Println(error)
+	registry.Deregister()
+	fmt.Println(err)
 }

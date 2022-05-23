@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	grpctransport "github.com/go-kit/kit/transport/grpc"
+	grpcTransport "github.com/go-kit/kit/transport/grpc"
 	"github.com/raysonxin/gokit-article-demo/arithmetic_grpc_demo/pb"
 	"github.com/raysonxin/gokit-article-demo/arithmetic_grpc_demo/service"
 	"google.golang.org/grpc"
@@ -36,7 +36,7 @@ func main() {
 }
 
 func NewClient(conn *grpc.ClientConn) service.Service {
-	var ep = grpctransport.NewClient(conn,
+	var ep = grpcTransport.NewClient(conn,
 		"pb.ArithmeticService",
 		"Calculate",
 		service.EncodeGRPCArithmeticRequest,
