@@ -1,4 +1,4 @@
-package service
+package main
 
 import (
 	"context"
@@ -54,18 +54,56 @@ func Metrics(requestCount metrics.Counter, requestLatency metrics.Histogram) Ser
 	}
 }
 
-func (mw metricMiddleware) Calculate(ctx context.Context, reqType string, a, b int) (ret int, err error) {
-	defer func(begin time.Time) {
-		lvs := []string{"method", "Calculate"}
+func (mw metricMiddleware) Add(a, b int) (ret int) {
+
+	defer func(beign time.Time) {
+		lvs := []string{"method", "Add"}
 		mw.requestCount.With(lvs...).Add(1)
-		mw.requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+		mw.requestLatency.With(lvs...).Observe(time.Since(beign).Seconds())
 	}(time.Now())
 
-	ret, err = mw.Service.Calculate(ctx, reqType, a, b)
+	ret = mw.Service.Add(a, b)
+	return ret
+}
+
+func (mw metricMiddleware) Subtract(a, b int) (ret int) {
+
+	defer func(beign time.Time) {
+		lvs := []string{"method", "Subtract"}
+		mw.requestCount.With(lvs...).Add(1)
+		mw.requestLatency.With(lvs...).Observe(time.Since(beign).Seconds())
+	}(time.Now())
+
+	ret = mw.Service.Subtract(a, b)
+	return ret
+}
+
+func (mw metricMiddleware) Multiply(a, b int) (ret int) {
+
+	defer func(beign time.Time) {
+		lvs := []string{"method", "Multiply"}
+		mw.requestCount.With(lvs...).Add(1)
+		mw.requestLatency.With(lvs...).Observe(time.Since(beign).Seconds())
+	}(time.Now())
+
+	ret = mw.Service.Multiply(a, b)
+	return ret
+}
+
+func (mw metricMiddleware) Divide(a, b int) (ret int, err error) {
+
+	defer func(beign time.Time) {
+		lvs := []string{"method", "Divide"}
+		mw.requestCount.With(lvs...).Add(1)
+		mw.requestLatency.With(lvs...).Observe(time.Since(beign).Seconds())
+	}(time.Now())
+
+	ret, err = mw.Service.Divide(a, b)
 	return
 }
 
 func (mw metricMiddleware) HealthCheck() (result bool) {
+
 	defer func(begin time.Time) {
 		lvs := []string{"method", "HealthCheck"}
 		mw.requestCount.With(lvs...).Add(1)
@@ -73,15 +111,5 @@ func (mw metricMiddleware) HealthCheck() (result bool) {
 	}(time.Now())
 
 	result = mw.Service.HealthCheck()
-	return
-}
-
-func (mw metricMiddleware) Login(name, pwd string) (token string, err error) {
-	defer func(begin time.Time) {
-		lvs := []string{"method", "Login"}
-		mw.requestCount.With(lvs...).Add(1)
-		mw.requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
-	}(time.Now())
-	token, err = mw.Service.Login(name, pwd)
 	return
 }
