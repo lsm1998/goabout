@@ -41,7 +41,7 @@ func main() {
 			err           error
 			hostPort      = "localhost:9090"
 			serviceName   = "gateway-service"
-			useNoopTracer = (*zipkinURL == "")
+			useNoopTracer = *zipkinURL == ""
 			reporter      = zipkinhttp.NewReporter(*zipkinURL)
 		)
 		defer reporter.Close()

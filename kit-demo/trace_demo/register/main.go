@@ -5,12 +5,11 @@ import (
 	"flag"
 	"fmt"
 	"github.com/go-kit/kit/log"
-	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
-	kitzipkin "github.com/go-kit/kit/tracing/zipkin"
+	kitPrometheus "github.com/go-kit/kit/metrics/prometheus"
+	kitZipkin "github.com/go-kit/kit/tracing/zipkin"
 	"github.com/openzipkin/zipkin-go"
-	stdprometheus "github.com/prometheus/client_golang/prometheus"
-
-	zipkinhttp "github.com/openzipkin/zipkin-go/reporter/http"
+	zipkinHttp "github.com/openzipkin/zipkin-go/reporter/http"
+	stdPrometheus "github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/time/rate"
 	"net/http"
 	"os"
@@ -42,14 +41,14 @@ func main() {
 	}
 
 	fieldKeys := []string{"method"}
-	requestCount := kitprometheus.NewCounterFrom(stdprometheus.CounterOpts{
+	requestCount := kitPrometheus.NewCounterFrom(stdPrometheus.CounterOpts{
 		Namespace: "raysonxin",
 		Subsystem: "arithmetic_service",
 		Name:      "request_count",
 		Help:      "Number of requests received.",
 	}, fieldKeys)
 
-	requestLatency := kitprometheus.NewSummaryFrom(stdprometheus.SummaryOpts{
+	requestLatency := kitPrometheus.NewSummaryFrom(stdPrometheus.SummaryOpts{
 		Namespace: "raysonxin",
 		Subsystem: "arithemetic_service",
 		Name:      "request_latency",
@@ -62,8 +61,8 @@ func main() {
 			err           error
 			hostPort      = *serviceHost + ":" + *servicePort
 			serviceName   = "arithmetic-service"
-			useNoopTracer = (*zipkinURL == "")
-			reporter      = zipkinhttp.NewReporter(*zipkinURL)
+			useNoopTracer = *zipkinURL == ""
+			reporter      = zipkinHttp.NewReporter(*zipkinURL)
 		)
 		defer reporter.Close()
 		zEP, _ := zipkin.NewEndpoint(serviceName, hostPort)
@@ -91,12 +90,12 @@ func main() {
 
 	endpoint := MakeArithmeticEndpoint(svc)
 	endpoint = NewTokenBucketLimitterWithBuildIn(ratebucket)(endpoint)
-	endpoint = kitzipkin.TraceEndpoint(zipkinTracer, "calculate-endpoint")(endpoint)
+	endpoint = kitZipkin.TraceEndpoint(zipkinTracer, "calculate-endpoint")(endpoint)
 
 	//创建健康检查的Endpoint
 	healthEndpoint := MakeHealthCheckEndpoint(svc)
 	healthEndpoint = NewTokenBucketLimitterWithBuildIn(ratebucket)(healthEndpoint)
-	healthEndpoint = kitzipkin.TraceEndpoint(zipkinTracer, "health-endpoint")(healthEndpoint)
+	healthEndpoint = kitZipkin.TraceEndpoint(zipkinTracer, "health-endpoint")(healthEndpoint)
 
 	//把算术运算Endpoint和健康检查Endpoint封装至ArithmeticEndpoints
 	endpts := ArithmeticEndpoints{
