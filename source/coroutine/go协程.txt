@@ -1,4 +1,12 @@
 go协程生命周期：
-func schedule() => execute() => gogo() => 业务方法 => goexit()
+schedule() => execute() => gogo() => 业务方法 => goexit()
 
 
+触发切换：
+为何需要触发切换？
+按照 go协程生命周期 ，则会导致协程饥饿，导致一直执行耗时长的协程，其他协程不能得到调度；
+
+切换时机：
+1.业务方法内调用gopark方法，主动挂起，调用的协程会重回schedule()；
+    何时调用gopark？ 例如time.Sleep()
+2.系统调用完成时，
