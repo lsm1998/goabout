@@ -1,0 +1,4 @@
+go协程生命周期：
+func schedule() => execute() => gogo() => 业务方法 => goexit()
+
+
