@@ -25,7 +25,7 @@ const sampleText = `The quick brown fox jumps over the lazy dog.`
 var (
 	mplusNormalFont font.Face
 	mplusBigFont    font.Face
-	jaKanjis        = []rune{}
+	jaKanjis        []rune
 )
 
 func init() {
