@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-
 	url := "https://kyfw.12306.cn/otn/confirmPassenger/getPassengerDTOs"
 	method := "POST"
 
@@ -16,7 +15,6 @@ func main() {
 
 	client := &http.Client{}
 	req, err := http.NewRequest(method, url, payload)
-
 	if err != nil {
 		fmt.Println(err)
 		return
