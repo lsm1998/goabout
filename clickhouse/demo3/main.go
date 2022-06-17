@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/lsm1998/mute/http"
+	"runtime"
 )
 
 func main() {
@@ -15,4 +16,6 @@ func main() {
 	}
 	fmt.Println(string(response.GetBody()))
 	fmt.Println(response.Curl())
+
+	runtime.NumGoroutine()
 }

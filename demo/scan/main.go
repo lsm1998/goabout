@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net"
+	"runtime"
+	"sync/atomic"
 	"time"
 )
 
@@ -28,11 +30,18 @@ type TcpPortScan struct {
 	host    string
 }
 
+var end atomic.Value
+
+func init() {
+	end.Store(false)
+}
+
 func (t *TcpPortScan) Scan() {
-	var c = make(chan struct{}, 64)
-	for i := t.minPort; i <= t.maxPort; i++ {
+	var c = make(chan struct{}, 128)
+	for i := t.minPort; i < t.maxPort; i++ {
+		fmt.Println(i)
+		c <- struct{}{}
 		go func(port uint16) {
-			c <- struct{}{}
 			address := fmt.Sprintf("%s:%d", t.host, port)
 			if err := t.tcpDial(address); err == nil {
 				fmt.Println("端口开放：", port)
@@ -40,7 +49,8 @@ func (t *TcpPortScan) Scan() {
 			<-c
 		}(i)
 	}
-	time.Sleep(time.Hour)
+	fmt.Println("循环结束")
+	end.Store(true)
 }
 
 func (t *TcpPortScan) PortRange() (min, max uint16) {
@@ -53,6 +63,14 @@ func (t *TcpPortScan) tcpDial(address string) error {
 }
 
 func main() {
-	tcpPortScan := &TcpPortScan{host: "127.0.0.1", minPort: 0, maxPort: 65535}
-	tcpPortScan.Scan()
+	tcpPortScan := &TcpPortScan{host: "127.0.0.1", minPort: 1025, maxPort: 65535}
+	go tcpPortScan.Scan()
+	for {
+		time.Sleep(2 * time.Second)
+		fmt.Println("当前协程数量=", runtime.NumGoroutine())
+		val, ok := end.Load().(bool)
+		if val && ok {
+			break
+		}
+	}
 }
