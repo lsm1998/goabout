@@ -28,8 +28,7 @@ func TestGet(t *testing.T) {
 		t.Errorf("Error: %s", err)
 	}
 
-	time := time.Now()
-	today := time.Format("02/01/2006")
+	today := time.Now().Format("02/01/2006")
 
 	// 测试今天的日期
 	ok := today == d

@@ -7,10 +7,10 @@ import (
 	"net/http"
 )
 
-// NewHTTPServer 是一个很好的服务器
+// NewHTTPServer http server
 func NewHTTPServer(ctx context.Context, endpoints Endpoints) http.Handler {
 	r := mux.NewRouter()
-	r.Use(commonMiddleware) // @请参阅 https://stackoverflow.com/a/51456342
+	r.Use(commonMiddleware)
 
 	r.Methods("GET").Path("/status").Handler(httptransport.NewServer(
 		endpoints.StatusEndpoint,

@@ -6,7 +6,7 @@ import (
 	"github.com/go-kit/kit/endpoint"
 )
 
-// 公开端点
+// Endpoints 公开端点
 type Endpoints struct {
 	GetEndpoint      endpoint.Endpoint
 	StatusEndpoint   endpoint.Endpoint
@@ -49,7 +49,7 @@ func MakeValidateEndpoint(srv Service) endpoint.Endpoint {
 	}
 }
 
-// get 端点映射
+// Get 端点映射
 func (e Endpoints) Get(ctx context.Context) (string, error) {
 	req := getRequest{}
 	resp, err := e.GetEndpoint(ctx, req)

@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// 服务为您的应用程序提供了一些「日期功能」
+// Service 服务为您的应用程序提供了一些「日期功能」
 type Service interface {
 	Status(ctx context.Context) (string, error)
 	Get(ctx context.Context) (string, error)
