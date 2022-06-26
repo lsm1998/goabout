@@ -24,7 +24,7 @@ func TestReentrantLock_TryLock(t *testing.T) {
 	wg.Add(2)
 	go func() {
 		defer wg.Done()
-		fmt.Println(goID())
+		fmt.Println(goroutineID())
 		lock.Lock()
 		fmt.Println("lock")
 		time.Sleep(3 * time.Second)
@@ -34,7 +34,7 @@ func TestReentrantLock_TryLock(t *testing.T) {
 
 	go func() {
 		defer wg.Done()
-		fmt.Println(goID())
+		fmt.Println(goroutineID())
 		for {
 			time.Sleep(time.Second)
 			if lock.TryLock() {

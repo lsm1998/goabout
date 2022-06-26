@@ -13,7 +13,7 @@ type ReentrantLock struct {
 	ownerGid     uint64
 }
 
-func goID() uint64 {
+func goroutineID() uint64 {
 	b := make([]byte, 64)
 	b = b[:runtime.Stack(b, false)]
 	b = bytes.TrimPrefix(b, []byte("goroutine "))
@@ -23,13 +23,13 @@ func goID() uint64 {
 }
 
 func (r *ReentrantLock) isOwner() bool {
-	return r.ownerGid == goID()
+	return r.ownerGid == goroutineID()
 }
 
 func (r *ReentrantLock) TryLock() bool {
 	if r.ownerGid == 0 && r.Mutex.TryLock() {
 		r.reentryCount = 1
-		r.ownerGid = goID()
+		r.ownerGid = goroutineID()
 		return true
 	}
 	if r.isOwner() {
@@ -45,7 +45,7 @@ func (r *ReentrantLock) Lock() {
 	} else {
 		r.Mutex.Lock()
 		r.reentryCount = 1
-		r.ownerGid = goID()
+		r.ownerGid = goroutineID()
 	}
 }
 
