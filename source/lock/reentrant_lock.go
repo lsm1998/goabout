@@ -1,7 +1,9 @@
 package lock
 
 import (
-	"os"
+	"bytes"
+	"runtime"
+	"strconv"
 	"sync"
 	"sync/atomic"
 )
@@ -11,7 +13,7 @@ type ReentrantLock struct {
 	cond         *sync.Cond
 	reentryCount int32
 	waitCount    int32
-	ownerGid     int64
+	ownerGid     uint64
 }
 
 func NewReentryLock() *ReentrantLock {
@@ -20,8 +22,17 @@ func NewReentryLock() *ReentrantLock {
 	return r
 }
 
+func goID() uint64 {
+	b := make([]byte, 64)
+	b = b[:runtime.Stack(b, false)]
+	b = bytes.TrimPrefix(b, []byte("goroutine "))
+	b = b[:bytes.IndexByte(b, ' ')]
+	n, _ := strconv.ParseUint(string(b), 10, 64)
+	return n
+}
+
 func (r *ReentrantLock) isOwner() bool {
-	return r.ownerGid == int64(os.Getgid())
+	return r.ownerGid == goID()
 }
 
 func (r *ReentrantLock) TryLock() bool {
@@ -32,7 +43,7 @@ func (r *ReentrantLock) TryLock() bool {
 		if atomic.CompareAndSwapInt32(&r.reentryCount, 0, 1) {
 			r.Mutex.Lock()
 			r.reentryCount = 1
-			r.ownerGid = int64(os.Getgid())
+			r.ownerGid = goID()
 			return true
 		}
 		return false
@@ -44,11 +55,11 @@ func (r *ReentrantLock) TryLock() bool {
 
 func (r *ReentrantLock) Lock() {
 	// 无任何协程占有
-	if atomic.LoadInt64(&r.ownerGid) == 0 &&
+	if atomic.LoadUint64(&r.ownerGid) == 0 &&
 		atomic.CompareAndSwapInt32(&r.reentryCount, 0, 1) {
 		r.Mutex.Lock()
 		r.reentryCount = 1
-		r.ownerGid = int64(os.Getgid())
+		r.ownerGid = goID()
 	} else if r.isOwner() { // 占用者为当前协程
 		r.reentryCount++
 	} else { // 已经被其他协程占有
@@ -62,9 +73,8 @@ func (r *ReentrantLock) UnLock() {
 	if !r.isOwner() {
 		return
 	}
+	r.reentryCount--
 	if r.reentryCount == 0 {
 		r.Mutex.Unlock()
-	} else {
-		r.reentryCount--
 	}
 }
