@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewReentryLock(t *testing.T) {
-	lock := NewReentryLock()
+	lock := ReentrantLock{}
 	lock.Lock()
 	lock.Lock()
 	t.Log(lock.reentryCount)
@@ -18,7 +18,7 @@ func TestNewReentryLock(t *testing.T) {
 }
 
 func TestReentrantLock_TryLock(t *testing.T) {
-	lock := NewReentryLock()
+	lock := ReentrantLock{}
 
 	var wg sync.WaitGroup
 	wg.Add(2)
