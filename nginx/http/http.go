@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"io"
 	"net"
-	"net/url"
 	"strconv"
 	"strings"
 )
@@ -41,10 +40,13 @@ func NewHttpRequest(c net.Conn) *HttpRequest {
 		}
 		lineList = append(lineList, line)
 	}
-	return &HttpRequest{
+	var request = &HttpRequest{
 		c:      c,
 		header: make(map[string]string),
 	}
+	_ = request.parseHttpRequest(lineList)
+	_ = request.parsePath()
+	return request
 }
 
 func (h *HttpRequest) parseHttpRequest(lineList []string) error {
@@ -70,9 +72,7 @@ func (h *HttpRequest) parseHttpLine(line string) error {
 		return parseHttpErr
 	}
 	h.Method = list[0]
-	if err := h.parseUrl(list[1]); err != nil {
-		return err
-	}
+	h.Path = list[1]
 	h.Version = list[2]
 	return nil
 }
@@ -101,14 +101,9 @@ func (h *HttpRequest) parseHttpBody(conn io.Reader) error {
 	return err
 }
 
-func (h *HttpRequest) parseUrl(path string) error {
-	u, err := url.Parse(path)
-	if err != nil {
-		return err
-	}
-	h.RawQuery = u.RawQuery
-	h.Scheme = u.Scheme
-	h.Host = u.Host
-	h.Path = u.Path
+func (h *HttpRequest) parsePath() error {
+	h.Host = h.header["Host"]
+	// h.RawQuery = path
+	// h.Path = path
 	return nil
 }

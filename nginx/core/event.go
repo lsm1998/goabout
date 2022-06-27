@@ -18,6 +18,7 @@ func NgxEventInit(address string) {
 		}
 		httpRequest := http.NewHttpRequest(conn)
 		fmt.Println(httpRequest)
+		conn.Close()
 	}
 }
 
