@@ -107,3 +107,7 @@ func (h *HttpRequest) parsePath() error {
 	// h.Path = path
 	return nil
 }
+
+func (h *HttpRequest) Response() {
+
+}

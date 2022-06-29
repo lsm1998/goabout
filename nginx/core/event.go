@@ -18,7 +18,12 @@ func NgxEventInit(address string) {
 		}
 		httpRequest := http.NewHttpRequest(conn)
 		fmt.Println(httpRequest)
-		conn.Close()
+		response := http.NewHttpResponse(conn)
+		var result = struct {
+			Name string `json:"name"`
+		}{Name: "lsm"}
+		response.Ok().JSON(200, result)
+		response.Close()
 	}
 }
 

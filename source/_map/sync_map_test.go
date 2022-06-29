@@ -7,7 +7,7 @@ import (
 )
 
 func TestSyncMap(t *testing.T) {
-	m := Map{}
+	m := MyMap{}
 
 	var wg sync.WaitGroup
 	wg.Add(200)
