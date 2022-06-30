@@ -108,6 +108,6 @@ func (h *HttpRequest) parsePath() error {
 	return nil
 }
 
-func (h *HttpRequest) Response() {
-
+func (h *HttpRequest) Query(key string) string {
+	return ""
 }

@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"net"
 	"nginx/http"
 )
@@ -11,19 +10,28 @@ func NgxEventInit(address string) {
 	if err != nil {
 		panic(err)
 	}
+	eventLoop(tcpEvent)
+}
+
+func eventLoop(event NginxEvent) {
 	for {
-		conn, err := tcpEvent.Accept()
+		conn, err := event.Accept()
 		if err != nil {
+			Error("event Accept fail,err=%v", err)
 			continue
 		}
-		httpRequest := http.NewHttpRequest(conn)
-		fmt.Println(httpRequest)
-		response := http.NewHttpResponse(conn)
-		var result = struct {
-			Name string `json:"name"`
-		}{Name: "lsm"}
-		response.Ok().JSON(200, result)
-		response.Close()
+		go func() {
+			request := http.NewHttpRequest(conn)
+			response := http.NewHttpResponse(conn)
+			defer response.Close()
+			var result = struct {
+				Name string `json:"name"`
+			}{Name: request.Query("name")}
+			if err = response.JSON(200, result); err != nil {
+				Error("response JSON fail,err=%v", err)
+				return
+			}
+		}()
 	}
 }
 

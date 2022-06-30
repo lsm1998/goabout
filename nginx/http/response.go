@@ -139,10 +139,14 @@ func (h *HttpResponse) SendStatic(path string) (int, error) {
 	return h.Ok().SetContentType(contentType).SetBody(body).Do()
 }
 
-func (h *HttpResponse) JSON(code int, data interface{}) {
+func (h *HttpResponse) JSON(code int, data interface{}) error {
 	result, err := json.Marshal(data)
 	if err != nil {
-		return
+		return err
 	}
-	_, _ = h.SetCode(code).SetContentType(JSONType).SetBody(result).Do()
+	_, err = h.SetCode(code).
+		SetContentType(JSONType).
+		SetBody(result).
+		Do()
+	return err
 }
