@@ -20,11 +20,21 @@ type MyMutex struct {
 
 func (m *MyMutex) Lock() {
 	// CAS 抢锁 => 自旋 抢锁 => 加入sema休眠队列
-	// 如何防止饥饿锁
 	if atomic.CompareAndSwapInt32(&m.state, 0, mutexLocked) {
 		return
 	}
 	m.lockSlow()
+}
+
+func (m *MyMutex) Unlock() {
+	// Fast path: drop lock bit.
+	new := atomic.AddInt32(&m.state, -mutexLocked)
+	// new为0代表没有协程等待锁，或者starving、awoke至少一个不是0
+	if new != 0 {
+		// Outlined slow path to allow inlining the fast path.
+		// To hide unlockSlow during tracing we skip one extra frame when tracing GoUnblock.
+		m.unlockSlow(new)
+	}
 }
 
 func (m *MyMutex) lockSlow() {
@@ -112,6 +122,41 @@ func (m *MyMutex) lockSlow() {
 	}
 }
 
+func (m *MyMutex) unlockSlow(new int32) {
+	if (new+mutexLocked)&mutexLocked == 0 {
+		panic("sync: unlock of unlocked mutex")
+	}
+	if new&mutexStarving == 0 { // 正常模式
+		old := new
+		for {
+			// If there are no waiters or a goroutine has already
+			// been woken or grabbed the lock, no need to wake anyone.
+			// In starvation mode ownership is directly handed off from unlocking
+			// goroutine to the next waiter. We are not part of this chain,
+			// since we did not observe mutexStarving when we unlocked the mutex above.
+			// So get off the way.
+			// 没有协程等待 || 三个标识位都为0
+			if old>>mutexWaiterShift == 0 || old&(mutexLocked|mutexWoken|mutexStarving) != 0 {
+				return
+			}
+			// Grab the right to wake someone.
+			new = (old - 1<<mutexWaiterShift) | mutexWoken
+			if atomic.CompareAndSwapInt32(&m.state, old, new) {
+				runtime_Semrelease(&m.sema, false, 1)
+				return
+			}
+			old = m.state
+		}
+	} else { // 饥饿模式
+		// Starving mode: handoff mutex ownership to the next waiter, and yield
+		// our time slice so that the next waiter can start to run immediately.
+		// Note: mutexLocked is not set, the waiter will set it after wakeup.
+		// But mutex is still considered locked if mutexStarving is set,
+		// so new coming goroutines won't acquire it.
+		runtime_Semrelease(&m.sema, true, 1)
+	}
+}
+
 // runtime_canSpin 是否可用继续自旋
 func runtime_canSpin(iter int) bool {
 	// 传递过来的iter大等于4或者cpu核数小等于1
@@ -143,6 +188,12 @@ func runtime_nanotime() int64 {
 	return 1
 }
 
+// runtime_SemacquireMutex 获取Sem锁
 func runtime_SemacquireMutex(s *uint32, lifo bool, skipframes int) {
+	// todo
+}
+
+// runtime_Semrelease 释放Sem锁
+func runtime_Semrelease(s *uint32, handoff bool, skipframes int) {
 	// todo
 }
