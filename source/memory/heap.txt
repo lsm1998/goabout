@@ -1,0 +1,5 @@
+heapArena
+    golang每次申请虚拟内存单元为64MB，最多有2^20个虚拟内存单元；
+    所有的heapArena组成了golang的heap
+
+mheap，golang堆内存，runtime/mheap.go
