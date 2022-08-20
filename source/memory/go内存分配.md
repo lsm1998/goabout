@@ -30,7 +30,7 @@ thread cache malloc 线程缓存分配
 
 TCMalloc是用来替代传统的malloc内存分配函数。它有减少内存碎片，适用于多核，更好的并行性支持等特性。
 
-![avatar](../images/TCMalloc架构简图.png)
+![avatar](../../images/TCMalloc架构简图.png)
 
 * Front-end：
 它是一个内存缓存，提供了快速分配和重分配内存给应用的功能。它主要有2部分组成：Per-thread cache 和 Per-CPU cache。
