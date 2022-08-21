@@ -3,3 +3,16 @@ heapArena
     所有的heapArena组成了golang的heap
 
 mheap，golang堆内存，runtime/mheap.go
+
+mspan
+    heapArena由多个mspan组成，mspan带有spanclass（共68个级别），代表能分配的区块最大内存单位，例如spanclass=1，代表最大为8字节为；
+    mspan由多个固定大小的区块组成，避免了内存碎片，但也造成一定的空间浪费；
+
+mcentral
+    每个spanclass都有一个对应的mcentral（共68*2个，分为需要gc扫描和不需要gc扫描），保存了mspan的链表头；
+    mcentral实际是一个中心索引，通过它可以找到所有的mspan，需要加锁来保证线程安全；
+
+线程缓存mcache
+    每个P本地队列拥有一个mcache字段，里面包含68*2个mspan（分为需要gc扫描和不需要gc扫描）；
+    协程分配内存不需要经过mcentral，直接在mcache分配，线程安全；
+    mcache交换：通过mcentral找一个空闲的mspan，mcache与其交换；

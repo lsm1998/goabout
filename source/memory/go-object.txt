@@ -1,0 +1,4 @@
+对象分级
+    微对象 0-16B，无指针        分配到普通mspan，2级spanclass
+    小对象 16B-32KB           分配到普通mspan，3-67级spanclass
+    大对象 32KB以上            分配到0级mspan
