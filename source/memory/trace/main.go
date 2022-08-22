@@ -1,13 +1,10 @@
 package main
 
 import (
-	"os"
 	"sync"
 )
 
 func main() {
-	_ = os.Setenv("GODEBUG", "gctrace=1")
-
 	wg := sync.WaitGroup{}
 	wg.Add(10)
 
