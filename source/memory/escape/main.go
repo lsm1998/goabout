@@ -2,11 +2,32 @@ package main
 
 import (
 	"encoding/json"
+	"reflect"
 )
 
 func getStr() *string {
 	var str = "hello" // 逃逸堆内存
 	return &str
+}
+
+func getList(l int) []struct{} {
+	return make([]struct{}, l, l)
+}
+
+func show1(val interface{}) {
+	i, ok := val.(int)
+	if !ok {
+		panic("show2")
+	}
+	i++
+}
+
+func show2(val interface{}) {
+	// 反射导致val逃逸
+	of := reflect.ValueOf(val)
+	if of.IsZero() {
+		return
+	}
 }
 
 func main() {
@@ -21,4 +42,13 @@ func main() {
 	if _, err := json.Marshal(list); err != nil {
 		panic(err)
 	}
+
+	list2 := getList(10)
+	for range list2 {
+	}
+
+	i1 := 0
+	i2 := 0
+	show1(i1)
+	show2(i2)
 }
