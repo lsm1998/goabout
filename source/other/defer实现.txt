@@ -1,0 +1,7 @@
+defer如何实现：
+    1.开放编码：直接将defer代码块编译到函数尾部；
+    2.注册函数信息：执行到defer时，将defer信息记录到deferpool，函数返回时执行从deferpool取出执行；
+
+
+golang 1.13的defer优化：
+    当只有一个defer时，将defer信息存储到栈上，函数返回时从栈上取出执行；

@@ -1,0 +1,12 @@
+调用runtime.gopanic函数
+
+    gp := getg() 获取当前协程
+
+    执行当前协程注册的所有defer
+    for {
+    	d := gp._defer
+    	if d == nil {
+    		break
+    	}
+    	...
+    }

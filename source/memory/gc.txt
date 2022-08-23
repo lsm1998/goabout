@@ -30,3 +30,6 @@ gc优化原则：减少堆上分配垃圾
 
 分析gc
     设置环境变量 GODEBUG="gctrace=1" , export GODEBUG="gctrace=1"
+
+golang gc如何并发？
+    并发gc的关键在于标记安全，使用删除屏障和插入屏障兼顾的混合屏障
