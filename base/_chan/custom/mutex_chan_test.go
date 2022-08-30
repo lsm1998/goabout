@@ -10,9 +10,10 @@ func TestMakeMutexChan(t *testing.T) {
 	mutexChan := MakeMutexChan(1)
 
 	go func() {
-		mutexChan.Send(1)
-		time.Sleep(1 * time.Second)
-		mutexChan.Send(1)
+		for {
+			time.Sleep(1 * time.Second)
+			mutexChan.Send(1)
+		}
 	}()
 
 	go func() {
