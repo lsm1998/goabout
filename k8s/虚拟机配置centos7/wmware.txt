@@ -1,10 +1,10 @@
-网络配置
+网络配置（centos7）
 
 1.选择NAT网络
 2.编辑/etc/sysconfig/network-scripts/ifcfg-ens33
 ONBOOT=yes
 
-配置static网络后出现主机不可达
+配置BOOTPROTO=static网络后出现主机不可达
 
 网关ip=192.168.74.2
 子关ip=192.168.74.0

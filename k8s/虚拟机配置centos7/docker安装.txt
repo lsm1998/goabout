@@ -1,0 +1,8 @@
+设置yum源
+yum-config-manager --add-repo http://download.docker.com/linux/centos/docker-ce.repo
+
+一键安装
+curl -sSL https://get.daocloud.io/docker | sh
+
+启动
+systemctl start docker
