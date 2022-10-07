@@ -10,7 +10,7 @@ ONBOOT=yes
 子关ip=192.168.74.0
 子网掩码=255.255.255.0
 
-GATEWAY=192.168.74.2
+GATEWAY=192.168.0.2
 IPADDR=192.168.0.128
 DNS=8.8.8.8
 
@@ -18,5 +18,7 @@ DNS=8.8.8.8
 vi /etc/resolv.conf
 
 nameserver 8.8.8.8
+
+service network restart
 
 https://blog.csdn.net/gaokcl/article/details/82834925
