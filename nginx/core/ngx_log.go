@@ -30,16 +30,19 @@ func (n *NgxLog) Init() {
 			panic(err)
 		}
 	}
-	n.errorFile, err = os.OpenFile(fmt.Sprintf("%s%c%s", n.logDir, os.PathSeparator, "error.log"),
-		os.O_CREATE|os.O_RDWR|os.O_APPEND, os.ModePerm)
+	n.errorFile, err = n.openFile(fmt.Sprintf("%s%c%s", n.logDir, os.PathSeparator, "error.log"))
 	if err != nil {
 		panic(err)
 	}
-	n.accessFile, err = os.OpenFile(fmt.Sprintf("%s%c%s", n.logDir, os.PathSeparator, "access.log"),
-		os.O_CREATE|os.O_RDWR|os.O_APPEND, os.ModePerm)
+	n.accessFile, err = n.openFile(fmt.Sprintf("%s%c%s", n.logDir, os.PathSeparator, "access.log"))
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (n *NgxLog) openFile(filename string) (*os.File, error) {
+	return os.OpenFile(filename,
+		os.O_CREATE|os.O_RDWR|os.O_APPEND, os.ModePerm)
 }
 
 func (n *NgxLog) Error(format string, a ...interface{}) error {
