@@ -39,7 +39,6 @@ func init() {
 func (t *TcpPortScan) Scan() {
 	var c = make(chan struct{}, 128)
 	for i := t.minPort; i < t.maxPort; i++ {
-		fmt.Println(i)
 		c <- struct{}{}
 		go func(port uint16) {
 			address := fmt.Sprintf("%s:%d", t.host, port)
