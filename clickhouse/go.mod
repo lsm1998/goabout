@@ -3,7 +3,6 @@ module clickhouse
 go 1.17
 
 require (
-	github.com/lsm1998/mute v0.0.0-20220420115845-25100aec0d04
 	gorm.io/driver/clickhouse v0.3.1
 	gorm.io/gorm v1.23.4
 )
