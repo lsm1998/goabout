@@ -1,5 +1,10 @@
 package core
 
+import (
+	"gopkg.in/yaml.v3"
+	"os"
+)
+
 var GlobalConfig NgxConfig
 
 type NgxConfig struct {
@@ -22,5 +27,17 @@ type NgxConfig struct {
 }
 
 func (c *NgxConfig) Init() {
-
+	bytes, err := os.ReadFile("nginx.yaml")
+	if err != nil {
+		panic(err)
+	}
+	if err = yaml.Unmarshal(bytes, &GlobalConfig); err != nil {
+		panic(err)
+	}
+	if GlobalConfig.Http.Include != "" {
+		bytes, err = os.ReadFile(GlobalConfig.Http.Include)
+		if err != nil {
+			panic(err)
+		}
+	}
 }

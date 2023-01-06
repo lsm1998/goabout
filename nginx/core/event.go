@@ -3,6 +3,7 @@ package core
 import (
 	"net"
 	"nginx/http"
+	"nginx/logs"
 )
 
 func NgxEventInit(address string) {
@@ -17,18 +18,19 @@ func eventLoop(event NginxEvent) {
 	for {
 		conn, err := event.Accept()
 		if err != nil {
-			Error("event Accept fail,err=%v", err)
+			logs.Error("event Accept fail,err=%v", err)
 			continue
 		}
 		go func() {
 			request := http.NewHttpRequest(conn)
 			response := http.NewHttpResponse(conn)
 			defer response.Close()
+
 			var result = struct {
 				Name string `json:"name"`
 			}{Name: request.Query("name")}
 			if err = response.JSON(200, result); err != nil {
-				Error("response JSON fail,err=%v", err)
+				logs.Error("response JSON fail,err=%v", err)
 				return
 			}
 		}()
@@ -37,6 +39,4 @@ func eventLoop(event NginxEvent) {
 
 type NginxEvent interface {
 	Accept() (net.Conn, error)
-
-	Close() error
 }

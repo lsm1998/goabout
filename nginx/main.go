@@ -2,6 +2,7 @@ package main
 
 import (
 	"nginx/core"
+	"nginx/logs"
 	"os"
 )
 
@@ -17,6 +18,8 @@ func main() {
 	pid = os.Getpid()
 	ppid = os.Getppid()
 
-	core.NgxLogInit("logs")
+	logs.NgxLogInit("logs")
+
+	logs.Access("go-nginx start,pid=%d,ppid=%d", pid, ppid)
 	core.NgxEventInit(":9000")
 }

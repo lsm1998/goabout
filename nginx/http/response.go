@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net"
 	"os"
 	"strings"
@@ -132,7 +132,7 @@ func (h *HttpResponse) SendStatic(path string) (int, error) {
 		return 0, err
 	}
 	defer file.Close()
-	body, err := ioutil.ReadAll(file)
+	body, err := io.ReadAll(file)
 	if err != nil {
 		return 0, err
 	}
