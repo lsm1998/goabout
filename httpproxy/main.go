@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httputil"
 	"strconv"
@@ -17,7 +17,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		request.URL.Path = r.RequestURI
 	}
 	reverseProxy.ModifyResponse = func(response *http.Response) error {
-		body, err := ioutil.ReadAll(response.Body)
+		body, err := io.ReadAll(response.Body)
 		if err != nil {
 			return err
 		}
@@ -25,7 +25,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		response.Body = ioutil.NopCloser(bytes.NewReader(body))
+		response.Body = io.NopCloser(bytes.NewReader(body))
 		response.ContentLength = int64(len(body))
 		response.Header.Set("Content-Type", "application/json")
 		response.Header.Set("Content-Length", strconv.Itoa(len(body)))
