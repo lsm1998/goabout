@@ -6,20 +6,12 @@ import (
 	"os"
 )
 
-// pid
-var pid int
-
-// ppid
-var ppid int
-
 func main() {
 	core.GlobalConfig.Init()
-
-	pid = os.Getpid()
-	ppid = os.Getppid()
+	core.GlobalConfig.Pid, core.GlobalConfig.Ppid = os.Getpid(), os.Getppid()
 
 	logs.NgxLogInit("logs")
 
-	logs.Access("go-nginx start,pid=%d,ppid=%d", pid, ppid)
+	logs.Access("go-nginx start,pid=%d,ppid=%d", core.GlobalConfig.Pid, core.GlobalConfig.Ppid)
 	core.NgxEventInit(":9000")
 }

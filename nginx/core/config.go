@@ -21,9 +21,11 @@ type NgxConfig struct {
 			Listen     string     `json:"listen" yaml:"listen"`
 			ServerName string     `json:"server_name" yaml:"server_name"`
 			ErrorPage  string     `json:"error_page" yaml:"error_page"`
-			Locations  []struct{} `json:"locations" yaml:"locations"`
+			Location   []Location `json:"location" yaml:"location"`
 		} `json:"server" yaml:"server"`
 	} `json:"http" yaml:"http"`
+	Pid  int
+	Ppid int
 }
 
 func (c *NgxConfig) Init() {
