@@ -20,7 +20,7 @@ func (*ClickStream) TableName() string {
 }
 
 func main() {
-	dsn := "tcp://119.91.192.70:9000?database=yidu&read_timeout=10&write_timeout=20"
+	dsn := "tcp://localhost:9000?database=yidu&read_timeout=10&write_timeout=20"
 	db, err := gorm.Open(clickhouse.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
