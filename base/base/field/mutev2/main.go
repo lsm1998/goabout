@@ -7,7 +7,7 @@ import (
 // GOOS=linux GOARCH=386 go tool compile -N -S main.go >> main.S
 func main() {
 	muteType := MuteType{}
-	outMuch(muteType, SetMuteType(&muteType))
+	fmt.Println(muteType, SetMuteType(&muteType))
 }
 
 type (
@@ -16,10 +16,6 @@ type (
 		Age  int32
 	}
 )
-
-func outMuch(demo interface{}, err error) {
-	fmt.Println(demo)
-}
 
 func SetMuteType(muteType *MuteType) error {
 	muteType.Name = "hello"

@@ -1,7 +1,0 @@
-https://blog.csdn.net/lovely_yoshino/article/details/120517973
-
-1.
-yum install docker-compose
-
-2.
-curl https://github.com/goharbor/harbor/releases/download/v2.4.2/harbor-offline-installer-v2.4.2.tgz

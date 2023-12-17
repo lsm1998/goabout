@@ -1,5 +1,10 @@
 package core
 
+import (
+	"gopkg.in/yaml.v3"
+	"os"
+)
+
 var GlobalConfig NgxConfig
 
 type NgxConfig struct {
@@ -16,11 +21,25 @@ type NgxConfig struct {
 			Listen     string     `json:"listen" yaml:"listen"`
 			ServerName string     `json:"server_name" yaml:"server_name"`
 			ErrorPage  string     `json:"error_page" yaml:"error_page"`
-			Locations  []struct{} `json:"locations" yaml:"locations"`
+			Location   []Location `json:"location" yaml:"location"`
 		} `json:"server" yaml:"server"`
 	} `json:"http" yaml:"http"`
+	Pid  int
+	Ppid int
 }
 
 func (c *NgxConfig) Init() {
-
+	bytes, err := os.ReadFile("nginx.yaml")
+	if err != nil {
+		panic(err)
+	}
+	if err = yaml.Unmarshal(bytes, &GlobalConfig); err != nil {
+		panic(err)
+	}
+	if GlobalConfig.Http.Include != "" {
+		bytes, err = os.ReadFile(GlobalConfig.Http.Include)
+		if err != nil {
+			panic(err)
+		}
+	}
 }

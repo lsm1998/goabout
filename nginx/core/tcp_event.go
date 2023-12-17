@@ -19,8 +19,3 @@ func NewTcpEvent(address string) (*TcpNginxEvent, error) {
 func (t *TcpNginxEvent) Accept() (net.Conn, error) {
 	return t.Listener.Accept()
 }
-
-func (t *TcpNginxEvent) Close() error {
-	//TODO implement me
-	panic("implement me")
-}

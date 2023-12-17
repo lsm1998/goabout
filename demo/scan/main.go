@@ -1,9 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net"
-	"runtime"
+	"sync"
 	"sync/atomic"
 	"time"
 )
@@ -30,26 +31,23 @@ type TcpPortScan struct {
 	host    string
 }
 
-var end atomic.Value
-
-func init() {
-	end.Store(false)
-}
-
 func (t *TcpPortScan) Scan() {
-	var c = make(chan struct{}, 128)
+	var wg sync.WaitGroup
+	var c = make(chan struct{}, *workNum)
 	for i := t.minPort; i < t.maxPort; i++ {
+		wg.Add(1)
 		c <- struct{}{}
 		go func(port uint16) {
+			defer wg.Done()
 			address := fmt.Sprintf("%s:%d", t.host, port)
 			if err := t.tcpDial(address); err == nil {
-				fmt.Println("端口开放：", port)
+				newVal := atomic.AddInt64(&openPortCount, 1)
+				fmt.Printf("open port: %d, count: %d\n", port, newVal)
 			}
 			<-c
 		}(i)
 	}
-	fmt.Println("循环结束")
-	end.Store(true)
+	wg.Wait()
 }
 
 func (t *TcpPortScan) PortRange() (min, max uint16) {
@@ -61,15 +59,24 @@ func (t *TcpPortScan) tcpDial(address string) error {
 	return err
 }
 
+var _ Scan = (*TcpPortScan)(nil)
+
+var (
+	host    = flag.String("h", "localhost", "host")
+	minPort = flag.Uint("min", 1025, "min port")
+	maxPort = flag.Uint("max", 65535, "max port")
+	workNum = flag.Uint("w", 1000, "work num")
+)
+
+var (
+	openPortCount int64
+)
+
 func main() {
-	tcpPortScan := &TcpPortScan{host: "127.0.0.1", minPort: 1025, maxPort: 65535}
-	go tcpPortScan.Scan()
-	for {
-		time.Sleep(2 * time.Second)
-		fmt.Println("当前协程数量=", runtime.NumGoroutine())
-		val, ok := end.Load().(bool)
-		if val && ok {
-			break
-		}
-	}
+	now := time.Now()
+	flag.Parse()
+	tcpPortScan := &TcpPortScan{host: *host, minPort: uint16(*minPort), maxPort: uint16(*maxPort)}
+	tcpPortScan.Scan()
+	fmt.Println("open port count:", openPortCount)
+	fmt.Println("耗时:", time.Since(now))
 }

@@ -1,113 +1,194 @@
 package http
 
-import (
-	"bufio"
-	"io"
-	"net"
-	"strconv"
-	"strings"
-)
+import "sync"
 
-type requestLine struct {
-	Scheme   string
-	Host     string
-	Path     string
-	RawQuery string
-	Method   string
-	Version  string
+const toLower = 'a' - 'A'
+
+var isTokenTable = [127]bool{
+	'!':  true,
+	'#':  true,
+	'$':  true,
+	'%':  true,
+	'&':  true,
+	'\'': true,
+	'*':  true,
+	'+':  true,
+	'-':  true,
+	'.':  true,
+	'0':  true,
+	'1':  true,
+	'2':  true,
+	'3':  true,
+	'4':  true,
+	'5':  true,
+	'6':  true,
+	'7':  true,
+	'8':  true,
+	'9':  true,
+	'A':  true,
+	'B':  true,
+	'C':  true,
+	'D':  true,
+	'E':  true,
+	'F':  true,
+	'G':  true,
+	'H':  true,
+	'I':  true,
+	'J':  true,
+	'K':  true,
+	'L':  true,
+	'M':  true,
+	'N':  true,
+	'O':  true,
+	'P':  true,
+	'Q':  true,
+	'R':  true,
+	'S':  true,
+	'T':  true,
+	'U':  true,
+	'W':  true,
+	'V':  true,
+	'X':  true,
+	'Y':  true,
+	'Z':  true,
+	'^':  true,
+	'_':  true,
+	'`':  true,
+	'a':  true,
+	'b':  true,
+	'c':  true,
+	'd':  true,
+	'e':  true,
+	'f':  true,
+	'g':  true,
+	'h':  true,
+	'i':  true,
+	'j':  true,
+	'k':  true,
+	'l':  true,
+	'm':  true,
+	'n':  true,
+	'o':  true,
+	'p':  true,
+	'q':  true,
+	'r':  true,
+	's':  true,
+	't':  true,
+	'u':  true,
+	'v':  true,
+	'w':  true,
+	'x':  true,
+	'y':  true,
+	'z':  true,
+	'|':  true,
+	'~':  true,
 }
 
-type header = map[string]string
-
-type HttpRequest struct {
-	requestLine
-	header
-	body []byte
-	c    net.Conn
+func validHeaderFieldByte(b byte) bool {
+	return int(b) < len(isTokenTable) && isTokenTable[b]
 }
 
-func NewHttpRequest(c net.Conn) *HttpRequest {
-	reader := bufio.NewReader(c)
-	var lineList []string
-	for {
-		byteLine, _, err := reader.ReadLine()
-		line := string(byteLine)
-		if err != nil {
-			return nil
+func canonicalMIMEHeaderKey(a []byte) string {
+	// See if a looks like a header key. If not, return it unchanged.
+	for _, c := range a {
+		if validHeaderFieldByte(c) {
+			continue
 		}
-		if line == "" {
-			break
+		// Don't canonicalize.
+		return string(a)
+	}
+
+	upper := true
+	for i, c := range a {
+		// Canonicalize: first letter upper case
+		// and upper case after each dash.
+		// (Host, User-Agent, If-Modified-Since).
+		// MIME headers are ASCII only, so no Unicode issues.
+		if upper && 'a' <= c && c <= 'z' {
+			c -= toLower
+		} else if !upper && 'A' <= c && c <= 'Z' {
+			c += toLower
 		}
-		lineList = append(lineList, line)
+		a[i] = c
+		upper = c == '-' // for next time
 	}
-	var request = &HttpRequest{
-		c:      c,
-		header: make(map[string]string),
+	commonHeaderOnce.Do(initCommonHeader)
+	// The compiler recognizes m[string(byteSlice)] as a special
+	// case, so a copy of a's bytes into a new string does not
+	// happen in this map lookup:
+	if v := commonHeader[string(a)]; v != "" {
+		return v
 	}
-	_ = request.parseHttpRequest(lineList)
-	_ = request.parsePath()
-	return request
+	return string(a)
 }
 
-func (h *HttpRequest) parseHttpRequest(lineList []string) error {
-	// 解析请求行
-	err := h.parseHttpLine(lineList[0])
-	if err != nil {
-		return nil
-	}
-	err = h.parseHttpHead(lineList[1:])
-	if err != nil {
-		return nil
-	}
-	err = h.parseHttpBody(h.c)
-	if err != nil {
-		return nil
-	}
-	return nil
-}
-
-func (h *HttpRequest) parseHttpLine(line string) error {
-	list := strings.Split(line, " ")
-	if len(list) != 3 {
-		return parseHttpErr
-	}
-	h.Method = list[0]
-	h.Path = list[1]
-	h.Version = list[2]
-	return nil
-}
-
-func (h *HttpRequest) parseHttpHead(list []string) error {
-	for _, v := range list {
-		index := strings.Index(v, ": ")
-		if index > 0 {
-			h.header[v[0:index]] = v[index+2:]
+func CanonicalMIMEHeaderKey(s string) string {
+	// Quick check for canonical encoding.
+	upper := true
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if !validHeaderFieldByte(c) {
+			return s
 		}
+		if upper && 'a' <= c && c <= 'z' {
+			return canonicalMIMEHeaderKey([]byte(s))
+		}
+		if !upper && 'A' <= c && c <= 'Z' {
+			return canonicalMIMEHeaderKey([]byte(s))
+		}
+		upper = c == '-'
 	}
-	return nil
+	return s
 }
 
-func (h *HttpRequest) parseHttpBody(conn io.Reader) error {
-	l, ok := h.header["Content-Length"]
-	if !ok {
-		return nil
-	}
-	le, err := strconv.Atoi(l)
-	if err != nil {
-		return err
-	}
-	h.body = make([]byte, le, le)
-	_, err = conn.Read(h.body)
-	return err
-}
+// commonHeader interns common header strings.
+var commonHeader map[string]string
 
-func (h *HttpRequest) parsePath() error {
-	h.Host = h.header["Host"]
-	// h.RawQuery = path
-	// h.Path = path
-	return nil
-}
+var commonHeaderOnce sync.Once
 
-func (h *HttpRequest) Query(key string) string {
-	return ""
+func initCommonHeader() {
+	commonHeader = make(map[string]string)
+	for _, v := range []string{
+		"Accept",
+		"Accept-Charset",
+		"Accept-Encoding",
+		"Accept-Language",
+		"Accept-Ranges",
+		"Cache-Control",
+		"Cc",
+		"Connection",
+		"Content-Id",
+		"Content-Language",
+		"Content-Length",
+		"Content-Transfer-Encoding",
+		"Content-Type",
+		"Cookie",
+		"Date",
+		"Dkim-Signature",
+		"Etag",
+		"Expires",
+		"From",
+		"Host",
+		"If-Modified-Since",
+		"If-None-Match",
+		"In-Reply-To",
+		"Last-Modified",
+		"Location",
+		"Message-Id",
+		"Mime-Version",
+		"Pragma",
+		"Received",
+		"Return-Path",
+		"Server",
+		"Set-Cookie",
+		"Subject",
+		"To",
+		"User-Agent",
+		"Via",
+		"X-Forwarded-For",
+		"X-Imforwards",
+		"X-Powered-By",
+	} {
+		commonHeader[v] = v
+	}
 }
