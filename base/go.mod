@@ -1,1 +1,3 @@
-module "base"
+module base
+
+go 1.18
