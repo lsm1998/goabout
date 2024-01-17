@@ -19,8 +19,8 @@ func (a *AutoOrm[T, K]) Update(data *T) error {
 	return a.db.Save(data).Error
 }
 
-func (a *AutoOrm[T, K]) Delete(data *T) error {
-	return a.db.Delete(data).Error
+func (a *AutoOrm[T, K]) DeleteById(id K) error {
+	return a.db.Delete(id).Error
 }
 
 func (a *AutoOrm[T, K]) FindById(data *T, id K) error {
