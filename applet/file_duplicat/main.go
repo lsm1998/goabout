@@ -4,10 +4,12 @@ import (
 	"crypto/md5"
 	"flag"
 	"fmt"
+	"github.com/gabriel-vasile/mimetype"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -20,6 +22,7 @@ var works = flag.Int("works", 32, "works")
 var md5Map = sync.Map{}
 var delCount int32
 var scanCount int32
+var summaryMap = sync.Map{}
 
 func init() {
 	go func() {
@@ -37,7 +40,8 @@ func log() {
 func main() {
 	flag.Parse()
 
-	// *path = "D:\\图片\\data"
+	*path = "D:\\图片\\data"
+	*method = "summary"
 
 	var operation = show
 	switch *method {
@@ -45,6 +49,8 @@ func main() {
 		operation = checkDuplicate
 	case "show":
 		operation = show
+	case "summary":
+		operation = summary
 	}
 	var wg sync.WaitGroup
 
@@ -73,6 +79,13 @@ func main() {
 	}
 	wg.Wait()
 	log()
+
+	if *method == "summary" {
+		summaryMap.Range(func(key, value any) bool {
+			fmt.Println("扩展名为", key, "的文件有", *value.(*int32), "个")
+			return true
+		})
+	}
 }
 
 func show(path string, info fs.FileInfo) error {
@@ -101,4 +114,35 @@ func getMd5WithPath(path string) ([]byte, error) {
 	hash := md5.New()
 	hash.Write(bytes)
 	return hash.Sum(nil), nil
+}
+
+func summary(path string, info fs.FileInfo) error {
+	// 获取文件扩展
+	ext, err := getFileExt(path)
+	if err != nil {
+		return err
+	}
+	point := new(int32)
+	*point = 1
+	val, _ := summaryMap.LoadOrStore(ext, point)
+	atomic.AddInt32(val.(*int32), 1)
+
+	if ext == "downloading" {
+		return os.Remove(path)
+	}
+
+	return nil
+}
+
+func getFileExt(path string) (string, error) {
+	index := strings.LastIndex(path, ".")
+	if index > -1 {
+		return path[index+1:], nil
+	}
+	bytes, err := os.ReadFile(path)
+	if err != nil {
+		return "", err
+	}
+	mType := mimetype.Detect(bytes)
+	return mType.Extension(), nil
 }

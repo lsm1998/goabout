@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 // 查看golang编译过程
 // linux & mac
@@ -12,6 +15,10 @@ import "fmt"
 func main() {
 	a := TestFunc(3)
 	fmt.Println(a)
+
+	date := time.Date(-1000, 1, 1, 0, 0, 0, 0, time.UTC)
+	fmt.Println(date)
+	fmt.Println(date.Unix())
 }
 
 func TestFunc(a int) int {
